@@ -27,6 +27,10 @@ export async function action({ request }: ActionArgs) {
   let formData = await request.formData();
   let name = formData.get("name");
 
+  if (typeof name !== "string") {
+    throw new Response("Invalid name", { status: 400 });
+  }
+
   await updateTenant(tenantId, { name });
 
   return redirect(`/admin`);

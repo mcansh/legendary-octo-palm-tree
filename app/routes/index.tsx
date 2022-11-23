@@ -56,7 +56,7 @@ export default function Index() {
         {data.tenant.images.map((image) => (
           <img
             key={image.id}
-            src={image.src}
+            src={image.url}
             alt={image.alt}
             style={{
               width: "100%",
