@@ -22,7 +22,7 @@ export default function Index() {
         <h1 className="text-xl">
           <a href="/">{data.tenant.name}</a>
         </h1>
-        <ul className="flex gap-4 mt-6">
+        <ul className="flex gap-4">
           <li>
             <a href="/about">About</a>
           </li>
@@ -31,7 +31,7 @@ export default function Index() {
           </li>
         </ul>
       </nav>
-      <main className="mx-8">
+      <main className="mx-8 mt-6">
         <div className="grid grid-cols-4 gap-4 justify-center items-center">
           {data.tenant.images.map((image) => (
             <img
