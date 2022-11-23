@@ -3,12 +3,11 @@ import { unstable_parseMultipartFormData } from "@remix-run/node";
 import { redirect } from "@remix-run/node";
 import { Form, useLoaderData } from "@remix-run/react";
 import { uploadHandler } from "~/upload.server";
-import { getTenant, updateTenant } from "~/utils.server";
+import { getTenant, getTenantSlug, updateTenant } from "~/utils.server";
 
 export async function loader({ request }: LoaderArgs) {
-  let { hostname } = new URL(request.url);
-  let tenantId = hostname.split(".")[0];
-  let tenant = await getTenant(tenantId);
+  let slug = getTenantSlug(request);
+  let tenant = await getTenant(slug);
 
   if (!tenant) {
     throw new Response("Tenant not found", { status: 404 });
@@ -18,9 +17,8 @@ export async function loader({ request }: LoaderArgs) {
 }
 
 export async function action({ request }: ActionArgs) {
-  let { hostname } = new URL(request.url);
-  let tenantId = hostname.split(".")[0];
-  let tenant = await getTenant(tenantId);
+  let slug = getTenantSlug(request);
+  let tenant = await getTenant(slug);
 
   if (!tenant) {
     throw new Response("Tenant not found", { status: 404 });
@@ -44,7 +42,7 @@ export async function action({ request }: ActionArgs) {
 
   console.log({ image });
 
-  await updateTenant(tenantId, {
+  await updateTenant(slug, {
     name,
     images: {
       create: image

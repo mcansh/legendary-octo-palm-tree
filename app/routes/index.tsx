@@ -1,11 +1,10 @@
 import type { LoaderArgs } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
-import { getTenant } from "~/utils.server";
+import { getTenant, getTenantSlug } from "~/utils.server";
 
 export async function loader({ request }: LoaderArgs) {
-  let { hostname } = new URL(request.url);
-  let tenantId = hostname.split(".")[0];
-  let tenant = await getTenant(tenantId);
+  let slug = getTenantSlug(request);
+  let tenant = await getTenant(slug);
 
   if (!tenant) {
     throw new Response("Tenant not found", { status: 404 });
