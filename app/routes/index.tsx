@@ -18,24 +18,12 @@ export default function Index() {
   let data = useLoaderData<typeof loader>();
 
   return (
-    <div>
-      <nav
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-        }}
-      >
-        <h1>
+    <>
+      <nav className="flex justify-between items-center mx-8">
+        <h1 className="text-xl">
           <a href="/">{data.tenant.name}</a>
         </h1>
-        <ul
-          style={{
-            display: "flex",
-            listStyle: "none",
-            gap: "1rem",
-          }}
-        >
+        <ul className="flex gap-4 mt-6">
           <li>
             <a href="/about">About</a>
           </li>
@@ -44,30 +32,18 @@ export default function Index() {
           </li>
         </ul>
       </nav>
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(4, 1fr)",
-          gap: "1rem",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        {data.tenant.images.map((image) => (
-          <img
-            key={image.id}
-            src={image.url}
-            alt={image.alt}
-            style={{
-              width: "100%",
-              height: "100%",
-              aspectRatio: "1 / 1",
-              borderRadius: 8,
-              backgroundColor: "gray",
-            }}
-          />
-        ))}
-      </div>
-    </div>
+      <main className="mx-8">
+        <div className="grid grid-cols-4 gap-4 justify-center items-center">
+          {data.tenant.images.map((image) => (
+            <img
+              key={image.id}
+              src={image.url}
+              alt={image.alt}
+              className="aspect-square w-full h-full rounded bg-gray-400"
+            />
+          ))}
+        </div>
+      </main>
+    </>
   );
 }
