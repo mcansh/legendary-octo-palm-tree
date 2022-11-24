@@ -2,17 +2,18 @@ import type { ActionArgs } from "@remix-run/node";
 import { redirect } from "@remix-run/node";
 import { Form } from "@remix-run/react";
 import slugify from "slugify";
+
 import { prisma } from "~/db.server";
 
 export async function action({ request }: ActionArgs) {
   let url = new URL(request.url);
-  const formData = new URLSearchParams(await request.text());
-  const name = formData.get("name");
+  let formData = new URLSearchParams(await request.text());
+  let name = formData.get("name");
   if (typeof name !== "string") {
     throw new Response("Invalid name", { status: 400 });
   }
 
-  const slug = slugify(name, { lower: true });
+  let slug = slugify(name, { lower: true });
 
   let tenant = await prisma.tenant.create({
     data: {

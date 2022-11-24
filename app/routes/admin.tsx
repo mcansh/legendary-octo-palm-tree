@@ -1,11 +1,12 @@
-import type { ActionArgs, LoaderArgs } from "@remix-run/node";
-import { unstable_parseMultipartFormData } from "@remix-run/node";
-import { redirect } from "@remix-run/node";
+import type { DataFunctionArgs } from "@remix-run/cloudflare";
+import { unstable_parseMultipartFormData } from "@remix-run/cloudflare";
+import { redirect } from "@remix-run/cloudflare";
 import { Form, useLoaderData } from "@remix-run/react";
+
 import { uploadHandler } from "~/upload.server";
 import { getTenant, getTenantSlug, updateTenant } from "~/utils.server";
 
-export async function loader({ request }: LoaderArgs) {
+export async function loader({ request }: DataFunctionArgs) {
   let slug = getTenantSlug(request);
   let tenant = await getTenant(slug);
 
@@ -16,7 +17,7 @@ export async function loader({ request }: LoaderArgs) {
   return { tenant };
 }
 
-export async function action({ request }: ActionArgs) {
+export async function action({ request }: DataFunctionArgs) {
   let slug = getTenantSlug(request);
   let tenant = await getTenant(slug);
 
@@ -24,10 +25,7 @@ export async function action({ request }: ActionArgs) {
     throw new Response("Tenant not found", { status: 404 });
   }
 
-  const formData = await unstable_parseMultipartFormData(
-    request,
-    uploadHandler
-  );
+  let formData = await unstable_parseMultipartFormData(request, uploadHandler);
 
   let name = formData.get("name");
   let image = formData.get("image");

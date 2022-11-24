@@ -1,8 +1,9 @@
-import type { LoaderArgs } from "@remix-run/node";
+import type { DataFunctionArgs } from "@remix-run/cloudflare";
 import { useLoaderData } from "@remix-run/react";
+
 import { getTenant, getTenantSlug } from "~/utils.server";
 
-export async function loader({ request }: LoaderArgs) {
+export async function loader({ request }: DataFunctionArgs) {
   let slug = getTenantSlug(request);
   let tenant = await getTenant(slug);
 

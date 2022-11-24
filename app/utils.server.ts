@@ -1,4 +1,5 @@
 import type { Prisma } from "@prisma/client";
+
 import { prisma } from "./db.server";
 
 export function getTenantSlug(request: Request) {

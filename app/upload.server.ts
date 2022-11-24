@@ -4,7 +4,7 @@ import {
   unstable_createFileUploadHandler,
   unstable_createMemoryUploadHandler,
   unstable_parseMultipartFormData,
-} from "@remix-run/node";
+} from "@remix-run/cloudflare";
 
 export const uploadHandler = unstable_composeUploadHandlers(
   unstable_createFileUploadHandler({
