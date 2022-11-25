@@ -1,33 +1,47 @@
-import type { ActionArgs } from "@remix-run/node";
-import { redirect } from "@remix-run/node";
+import { redirect } from "@remix-run/cloudflare";
 import { Form } from "@remix-run/react";
 import slugify from "slugify";
+import { uuid } from "@cfworker/uuid";
 
-import { prisma } from "~/db.server";
+import type { SalonDataFunctionArgs } from "~/db.server";
+import { db } from "~/db.server";
+import invariant from "~/invariant";
 
-export async function action({ request }: ActionArgs) {
+export async function action({ request, context }: SalonDataFunctionArgs) {
   let url = new URL(request.url);
   let formData = new URLSearchParams(await request.text());
   let name = formData.get("name");
+
   if (typeof name !== "string") {
     throw new Response("Invalid name", { status: 400 });
   }
 
   let slug = slugify(name, { lower: true });
 
-  let tenant = await prisma.tenant.create({
+  let { results, success } = await db(context).insert({
+    tableName: "Tenant",
     data: {
       name,
       slug,
+      id: uuid(),
     },
+    returning: "*",
   });
 
-  if (process.env.NODE_ENV === "development") {
-    let search = new URLSearchParams({ tenantId: tenant.id }).toString();
-    return redirect(`?${search}`);
-  }
+  console.log({ results, success });
 
-  return redirect(`https://${tenant.slug}.${url.host}`);
+  invariant(
+    success && results,
+    "Tenant was not registered; an error has occurred."
+  );
+
+  // if (process.env.NODE_ENV === "development") {
+  //   let search = new URLSearchParams({ tenantId: tenant.id }).toString();
+  //   return redirect(`?${search}`);
+  // }
+
+  return redirect(`/admin`);
+  // return redirect(`https://${tenant.slug}.${url.host}`);
 }
 
 export default function JoinPage() {

@@ -1,14 +1,19 @@
-import type { DataFunctionArgs } from "@remix-run/cloudflare";
 import { unstable_parseMultipartFormData } from "@remix-run/cloudflare";
 import { redirect } from "@remix-run/cloudflare";
 import { Form, useLoaderData } from "@remix-run/react";
 
-import { uploadHandler } from "~/upload.server";
-import { getTenant, getTenantSlug, updateTenant } from "~/utils.server";
+import type { SalonDataFunctionArgs } from "~/db.server";
+import invariant from "~/invariant";
+import {
+  getTenant,
+  getTenantSlug,
+  updateTenant,
+  uploadImageToCloudflare,
+} from "~/utils.server";
 
-export async function loader({ request }: DataFunctionArgs) {
+export async function loader({ request, context }: SalonDataFunctionArgs) {
   let slug = getTenantSlug(request);
-  let tenant = await getTenant(slug);
+  let tenant = await getTenant(slug, context);
 
   if (!tenant) {
     throw new Response("Tenant not found", { status: 404 });
@@ -17,15 +22,15 @@ export async function loader({ request }: DataFunctionArgs) {
   return { tenant };
 }
 
-export async function action({ request }: DataFunctionArgs) {
+export async function action({ request, context }: SalonDataFunctionArgs) {
   let slug = getTenantSlug(request);
-  let tenant = await getTenant(slug);
+  let tenant = await getTenant(slug, context);
 
   if (!tenant) {
     throw new Response("Tenant not found", { status: 404 });
   }
 
-  let formData = await unstable_parseMultipartFormData(request, uploadHandler);
+  let formData = await request.formData();
 
   let name = formData.get("name");
   let image = formData.get("image");
@@ -34,22 +39,11 @@ export async function action({ request }: DataFunctionArgs) {
     throw new Response("Invalid name", { status: 400 });
   }
 
-  if (typeof image === "string") {
-    throw new Response("Invalid image", { status: 400 });
-  }
+  let imageUrl = await uploadImageToCloudflare(image, context);
 
-  console.log({ image });
-
-  await updateTenant(slug, {
+  await updateTenant(context, slug, {
     name,
-    images: {
-      create: image
-        ? {
-            url: `/uploads/${image.name}`,
-            alt: image.name,
-          }
-        : undefined,
-    },
+    images: imageUrl ? [{ url: imageUrl, alt: "" }] : [],
   });
 
   return redirect(`/admin`);

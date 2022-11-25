@@ -1,11 +1,11 @@
-import type { DataFunctionArgs } from "@remix-run/cloudflare";
 import { useLoaderData } from "@remix-run/react";
 
+import type { SalonDataFunctionArgs } from "~/db.server";
 import { getTenant, getTenantSlug } from "~/utils.server";
 
-export async function loader({ request }: DataFunctionArgs) {
+export async function loader({ request, context }: SalonDataFunctionArgs) {
   let slug = getTenantSlug(request);
-  let tenant = await getTenant(slug);
+  let tenant = await getTenant(slug, context);
 
   if (!tenant) {
     throw new Response("Tenant not found", { status: 404 });

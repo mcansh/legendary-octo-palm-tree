@@ -5,5 +5,7 @@ node_modules
 /functions/\[\[path\]\].js.map
 /public/build
 .env
+.dev.vars
 /app/styles/app.css
 .eslintcache
+/.wrangler/

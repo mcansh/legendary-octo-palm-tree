@@ -1,23 +1,18 @@
-import { PrismaClient } from "@prisma/client";
+import type { AppLoadContext, DataFunctionArgs } from "@remix-run/cloudflare";
+import { D1QB } from "workers-qb";
 
-let prisma: PrismaClient;
-
-declare global {
-  var __db__: PrismaClient;
+export interface Queue<Body = any> {
+  send(body: Body): Promise<void>;
 }
 
-// this is needed because in development we don't want to restart
-// the server with every change, but we want to make sure we don't
-// create a new connection to the DB with every change either.
-// in production we'll have a single connection to the DB.
-if (process.env.NODE_ENV === "production") {
-  prisma = new PrismaClient();
-} else {
-  if (!global.__db__) {
-    global.__db__ = new PrismaClient();
-  }
-  prisma = global.__db__;
-  prisma.$connect();
+export interface SalonContext extends AppLoadContext {
+  SALON_DB: D1Database;
 }
 
-export { prisma };
+export interface SalonDataFunctionArgs extends DataFunctionArgs {
+  context: SalonContext;
+}
+
+export function db(context: SalonContext) {
+  return new D1QB(context.SALON_DB);
+}
