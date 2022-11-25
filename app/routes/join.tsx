@@ -1,32 +1,45 @@
 import type { DataFunctionArgs } from "@remix-run/node";
-import { redirect } from "@remix-run/node";
 import { Form } from "@remix-run/react";
-import slugify from "slugify";
-import { zfd } from "zod-form-data";
 
-import { prisma } from "~/db.server";
+import { authenticator } from "~/auth.server";
 
-let schema = zfd.formData({ name: zfd.text() });
+export async function loader({ request }: DataFunctionArgs) {
+  return await authenticator.isAuthenticated(request, { successRedirect: "/" });
+}
 
 export async function action({ request }: DataFunctionArgs) {
-  let url = new URL(request.url);
-  let formData = new URLSearchParams(await request.text());
-  let data = schema.parse(formData);
-
-  let slug = slugify(data.name, { lower: true });
-
-  let tenant = await prisma.tenant.create({ data: { name: data.name, slug } });
-
-  return redirect(`${url.protocol}//${tenant.slug}.localhost:3000`);
+  return await authenticator.authenticate("form", request, {
+    successRedirect: "/",
+    failureRedirect: "/login",
+  });
 }
 
 export default function JoinPage() {
   return (
-    <Form method="post">
+    <Form method="post" replace className="flex flex-col space-y-4">
       <label>
-        <span>Salon Name</span>
-        <input type="text" name="name" />
+        <span>Email</span>
+        <input type="email" name="email" />
       </label>
+
+      <label>
+        <span>Password</span>
+        <input type="password" name="password" />
+      </label>
+
+      <label>
+        <span>First Name</span>
+        <input type="text" name="given_name" />
+      </label>
+
+      <label>
+        <span>Last Name</span>
+        <input type="text" name="family_name" />
+      </label>
+
+      <button type="submit" name="intent" value="register">
+        Join
+      </button>
     </Form>
   );
 }

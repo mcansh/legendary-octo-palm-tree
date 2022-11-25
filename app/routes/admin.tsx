@@ -11,10 +11,15 @@ import cuid from "cuid";
 
 import { uploadImageToCloudinary } from "~/upload.server";
 import { getTenant, getTenantSlug, updateTenant } from "~/utils.server";
+import { authenticator } from "~/auth.server";
 
 export async function loader({ request }: DataFunctionArgs) {
+  let user = await authenticator.isAuthenticated(request, {
+    failureRedirect: "/login",
+  });
+
   let slug = getTenantSlug(request);
-  let tenant = await getTenant(slug);
+  let tenant = await getTenant(slug, user);
 
   if (!tenant) {
     throw new Response("Tenant not found", { status: 404 });
@@ -66,7 +71,7 @@ export async function action({ request }: DataFunctionArgs) {
     console.log(result.error);
 
     return json(
-      { errors: result.error.flatten().fieldErrors },
+      { errors: result.error.formErrors.fieldErrors },
       { status: 400 }
     );
   }
@@ -92,6 +97,7 @@ export default function Admin() {
       method="post"
       encType="multipart/form-data"
       className="flex flex-col space-y-4"
+      replace
     >
       <label className="space-x-2">
         <span>Name</span>
