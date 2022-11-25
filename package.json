@@ -10,7 +10,8 @@
     "dev": "run-p \"dev:*\"",
     "start": "remix-serve build",
     "lint": "eslint --cache --fix --ignore-path .gitignore  .",
-    "format": "prettier --write --ignore-path .gitignore  ."
+    "format": "prettier --write --ignore-path .gitignore  .",
+    "db:migrate": "prisma migrate deploy"
   },
   "dependencies": {
     "@prisma/client": "^4.6.1",

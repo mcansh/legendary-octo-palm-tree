@@ -1,0 +1,11 @@
+[build]
+  builder = "nixpacks"
+  buildCommand = "pnpm run build"
+  watchPatterns = ["app/**", "pnpm-lock.yaml", "prisma", "remix.config.mjs", "railway.toml"]
+
+[deploy]
+  startCommand = "pnpm run db:migrate && pnpm run start"
+  # healthcheckPath = "/health"
+  # healthcheckTimeout = 100
+  restartPolicyType = "on_failure"
+  restartPolicyMaxRetries = 5
