@@ -21,8 +21,6 @@ export async function loader({ request }: DataFunctionArgs) {
 
 export default function Index() {
   let data = useLoaderData<typeof loader>();
-  console.log(data);
-
   let userTenant = data.user?.tenants?.find((t) => t.slug === data.tenant.slug);
 
   return (

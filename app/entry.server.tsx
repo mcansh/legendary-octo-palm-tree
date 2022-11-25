@@ -4,8 +4,31 @@ import { Response } from "@remix-run/node";
 import { RemixServer } from "@remix-run/react";
 import isbot from "isbot";
 import { renderToPipeableStream } from "react-dom/server";
+import { createSecureHeaders } from "@mcansh/remix-secure-headers";
 
 const ABORT_DELAY = 5000;
+
+let secureHeaders = createSecureHeaders({
+  "Cross-Origin-Opener-Policy": "same-origin",
+  "Referrer-Policy": "strict-origin-when-cross-origin",
+  "X-Content-Type-Options": "nosniff",
+  "X-Frame-Options": "DENY",
+  "X-DNS-Prefetch-Control": "on",
+  "Content-Security-Policy": {
+    defaultSrc: ["'none'"],
+    styleSrc: ["'self'"],
+    scriptSrc: ["'self'", "'unsafe-inline'"],
+    connectSrc: process.env.NODE_ENV === "production" ? [] : ["*"],
+    imgSrc: ["'self'", "https://res.cloudinary.com"],
+    prefetchSrc: ["'self'"],
+    manifestSrc: ["'self'"],
+  },
+  "Strict-Transport-Security": {
+    maxAge: 31536000,
+    includeSubDomains: true,
+    preload: true,
+  },
+});
 
 export default function handleRequest(
   request: Request,
@@ -13,6 +36,11 @@ export default function handleRequest(
   responseHeaders: Headers,
   remixContext: EntryContext
 ) {
+  responseHeaders.set("Content-Type", "text/html");
+  for (let header of secureHeaders) {
+    responseHeaders.set(...header);
+  }
+
   return isbot(request.headers.get("user-agent"))
     ? handleBotRequest(
         request,
@@ -42,8 +70,6 @@ function handleBotRequest(
       {
         onAllReady() {
           let body = new PassThrough();
-
-          responseHeaders.set("Content-Type", "text/html");
 
           resolve(
             new Response(body, {
@@ -83,8 +109,6 @@ function handleBrowserRequest(
       {
         onShellReady() {
           let body = new PassThrough();
-
-          responseHeaders.set("Content-Type", "text/html");
 
           resolve(
             new Response(body, {

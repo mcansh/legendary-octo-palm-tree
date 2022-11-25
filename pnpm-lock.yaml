@@ -1,6 +1,7 @@
 lockfileVersion: 5.4
 
 specifiers:
+  '@mcansh/remix-secure-headers': ^0.6.2
   '@node-rs/bcrypt': ^1.6.1
   '@prisma/client': ^4.6.1
   '@remix-run/dev': ^1.7.6
@@ -32,6 +33,7 @@ specifiers:
   zod-form-data: ^1.2.4
 
 dependencies:
+  '@mcansh/remix-secure-headers': 0.6.2
   '@node-rs/bcrypt': 1.6.1
   '@prisma/client': 4.6.1_prisma@4.6.1
   '@remix-run/node': 1.7.6_biqbaboplfbrettd7655fr4n2y
@@ -1475,6 +1477,12 @@ packages:
       '@jridgewell/resolve-uri': 3.1.0
       '@jridgewell/sourcemap-codec': 1.4.14
     dev: true
+
+  /@mcansh/remix-secure-headers/0.6.2:
+    resolution: {integrity: sha512-WN076Px1wn6enE1ca0NRYI1OAEpRwY4S9FuN+TD3zprBv4y1uzW/abHCRvmbvAbXyc4oD1QNkIFD3yu/Q1GS4A==}
+    dependencies:
+      type-fest: 2.19.0
+    dev: false
 
   /@nicolo-ribaudo/eslint-scope-5-internals/5.1.1-v1:
     resolution: {integrity: sha512-54/JRvkLIzzDWshCWfuhadfrfZVPiElY8Fcgmg1HroEly/EDSszzhBAsarCux+D/kOslTRquNzuyGSmUSTTHGg==}
@@ -7757,6 +7765,11 @@ packages:
     resolution: {integrity: sha512-t0rzBq87m3fVcduHDUFhKmyyX+9eo6WQjZvf51Ea/M0Q7+T374Jp1aUiyUl0GKxp8M/OETVHSDvmkyPgvX+X2w==}
     engines: {node: '>=10'}
     dev: true
+
+  /type-fest/2.19.0:
+    resolution: {integrity: sha512-RAH822pAdBgcNMAfWnCBU3CFZcfZ/i1eZjwFU/dsLKumyuuP3niueg2UAukXYF0E2AAoc82ZSSf9J0WQBinzHA==}
+    engines: {node: '>=12.20'}
+    dev: false
 
   /type-is/1.6.18:
     resolution: {integrity: sha512-TkRKr9sUTxEH8MdfuCSP7VizJyzRNMjj2J2do2Jr3Kym598JVdEksuzPQCnlFPW4ky9Q+iA+ma9BGm06XQBy8g==}

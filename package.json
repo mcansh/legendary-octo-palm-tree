@@ -14,6 +14,7 @@
     "db:migrate": "prisma migrate deploy"
   },
   "dependencies": {
+    "@mcansh/remix-secure-headers": "^0.6.2",
     "@node-rs/bcrypt": "^1.6.1",
     "@prisma/client": "^4.6.1",
     "@remix-run/node": "^1.7.6",
