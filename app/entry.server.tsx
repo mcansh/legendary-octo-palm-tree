@@ -15,13 +15,10 @@ let secureHeaders = createSecureHeaders({
   "X-Frame-Options": "DENY",
   "X-DNS-Prefetch-Control": "on",
   "Content-Security-Policy": {
-    defaultSrc: ["'none'"],
-    styleSrc: ["'self'"],
+    defaultSrc: ["'self'"],
     scriptSrc: ["'self'", "'unsafe-inline'"],
     connectSrc: process.env.NODE_ENV === "production" ? [] : ["*"],
     imgSrc: ["'self'", "https://res.cloudinary.com"],
-    prefetchSrc: ["'self'"],
-    manifestSrc: ["'self'"],
   },
   "Strict-Transport-Security": {
     maxAge: 31536000,
