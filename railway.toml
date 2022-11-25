@@ -1,7 +1,6 @@
 [build]
   builder = "nixpacks"
   buildCommand = "pnpm run build"
-  watchPatterns = ["app/**", "pnpm-lock.yaml", "prisma", "remix.config.mjs", "railway.toml"]
 
 [deploy]
   startCommand = "pnpm run db:migrate && pnpm run start"
