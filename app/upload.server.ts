@@ -1,18 +1,25 @@
-import path from "node:path";
-import {
-  unstable_composeUploadHandlers,
-  unstable_createFileUploadHandler,
-  unstable_createMemoryUploadHandler,
-  unstable_parseMultipartFormData,
-} from "@remix-run/node";
+import { writeAsyncIterableToWritable } from "@remix-run/node";
+import type { UploadApiResponse } from "cloudinary";
+import cloudinary from "cloudinary";
 
-export const uploadHandler = unstable_composeUploadHandlers(
-  unstable_createFileUploadHandler({
-    maxPartSize: 5_000_000,
-    file: ({ filename }) => filename,
-    avoidFileConflicts: true,
-    directory: path.join(process.cwd(), "public", "uploads"),
-  }),
-  // parse everything else into memory
-  unstable_createMemoryUploadHandler()
-);
+export async function uploadImageToCloudinary(data: AsyncIterable<Uint8Array>) {
+  let uploadPromise = new Promise<UploadApiResponse>(
+    async (resolve, reject) => {
+      let uploadStream = cloudinary.v2.uploader.upload_stream(
+        {
+          folder: "remix",
+        },
+        (error, result) => {
+          if (error || !result) {
+            reject(error);
+            return;
+          }
+          resolve(result);
+        }
+      );
+      await writeAsyncIterableToWritable(data, uploadStream);
+    }
+  );
+
+  return uploadPromise;
+}

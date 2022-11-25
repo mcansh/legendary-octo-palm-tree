@@ -1,5 +1,6 @@
 import type { LoaderArgs } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
+
 import { getTenant, getTenantSlug } from "~/utils.server";
 
 export async function loader({ request }: LoaderArgs) {
