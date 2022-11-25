@@ -19,7 +19,11 @@ export async function loader({ request }: DataFunctionArgs) {
   });
 
   let slug = getTenantSlug(request);
-  let tenant = await getTenant(slug, user);
+  if (!user.tenants.find((t) => t.slug === slug)) {
+    throw new Response(null, { status: 403, statusText: "Forbidden" });
+  }
+
+  let tenant = await getTenant(slug);
 
   if (!tenant) {
     throw new Response("Tenant not found", { status: 404 });

@@ -9,7 +9,9 @@ import { sessionStorage } from "~/session.server";
 
 import { prisma } from "./db.server";
 
-export let authenticator = new Authenticator<User>(sessionStorage);
+export let authenticator = new Authenticator<
+  User & { tenants: Array<{ slug: string }> }
+>(sessionStorage);
 
 let register = zfd.formData({
   email: zfd.text(z.string().email()),
@@ -44,6 +46,7 @@ authenticator.use(
           family_name: result.data.family_name,
           password: { create: { hash: hashedPassword } },
         },
+        include: { tenants: { select: { slug: true } } },
       });
 
       return user;
@@ -58,12 +61,12 @@ authenticator.use(
 
     let user = await prisma.user.findUnique({
       where: { email: result.data.email },
-      include: { password: true },
+      include: { password: true, tenants: { select: { slug: true } } },
     });
 
     if (!user) throw new Error("Invalid credentials");
 
-    let valid = await verify(result.data.password, result.data.password);
+    let valid = await verify(result.data.password, user.password!.hash);
 
     if (!valid) throw new Error("Invalid credentials");
 

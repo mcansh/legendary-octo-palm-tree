@@ -1,11 +1,14 @@
 import type { DataFunctionArgs } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import type { ThrownResponse } from "@remix-run/react";
+import { Form } from "@remix-run/react";
 import { useCatch, useLoaderData } from "@remix-run/react";
 
+import { authenticator } from "~/auth.server";
 import { getTenant, getTenantSlug } from "~/utils.server";
 
 export async function loader({ request }: DataFunctionArgs) {
+  let user = await authenticator.isAuthenticated(request);
   let slug = getTenantSlug(request);
   let tenant = await getTenant(slug);
 
@@ -13,11 +16,14 @@ export async function loader({ request }: DataFunctionArgs) {
     throw json({ slug }, { status: 404, statusText: "Not Found" });
   }
 
-  return json({ tenant });
+  return json({ tenant, user });
 }
 
 export default function Index() {
   let data = useLoaderData<typeof loader>();
+  console.log(data);
+
+  let userTenant = data.user?.tenants?.find((t) => t.slug === data.tenant.slug);
 
   return (
     <>
@@ -32,6 +38,13 @@ export default function Index() {
           <li>
             <a href="/contact">Contact</a>
           </li>
+          {userTenant ? (
+            <li>
+              <Form method="post" action="/logout">
+                <button type="submit">Logout</button>
+              </Form>
+            </li>
+          ) : null}
         </ul>
       </nav>
       <main className="mx-8 mt-6">
