@@ -1,75 +1,29 @@
-import { Authenticator } from "remix-auth";
-import { FormStrategy } from "remix-auth-form";
-import type { User } from "@prisma/client";
-import { zfd } from "zod-form-data";
-import { z } from "zod";
-import { hash, verify } from "@node-rs/bcrypt";
+import crypto from "crypto";
 
-import { sessionStorage } from "~/session.server";
+let LENGTH = 64;
+let SALT_LENGTH = 16;
 
-import { prisma } from "./db.server";
+export async function hash(password: string): Promise<string> {
+  return new Promise((resolve, reject) => {
+    // generate random 16 bytes long salt
+    let salt = crypto.randomBytes(SALT_LENGTH).toString("hex");
 
-export let authenticator = new Authenticator<
-  User & { tenants: Array<{ slug: string }> }
->(sessionStorage);
-
-let register = zfd.formData({
-  email: zfd.text(z.string().email()),
-  password: zfd.text(z.string().min(8)),
-  given_name: zfd.text(),
-  family_name: zfd.text(),
-});
-
-let login = zfd.formData({
-  email: zfd.text(z.string().email()),
-  password: zfd.text(z.string().min(8)),
-});
-
-authenticator.use(
-  new FormStrategy(async ({ form }) => {
-    let intent = form.get("intent");
-
-    if (intent === "register") {
-      let result = register.safeParse(form);
-
-      if (!result.success) {
-        console.error(result.error.formErrors.fieldErrors);
-        throw new Error("Invalid form data");
-      }
-
-      let hashedPassword = await hash(result.data.password);
-
-      let user = await prisma.user.create({
-        data: {
-          email: result.data.email,
-          given_name: result.data.given_name,
-          family_name: result.data.family_name,
-          password: { create: { hash: hashedPassword } },
-        },
-        include: { tenants: { select: { slug: true } } },
-      });
-
-      return user;
-    }
-
-    let result = login.safeParse(form);
-
-    if (!result.success) {
-      console.error(result.error.formErrors.fieldErrors);
-      throw new Error("Invalid form data");
-    }
-
-    let user = await prisma.user.findUnique({
-      where: { email: result.data.email },
-      include: { password: true, tenants: { select: { slug: true } } },
+    crypto.scrypt(password, salt, LENGTH, (err, derivedKey) => {
+      if (err) reject(err);
+      resolve(`${salt}:${derivedKey.toString("hex")}`);
     });
+  });
+}
 
-    if (!user) throw new Error("Invalid credentials");
-
-    let valid = await verify(result.data.password, user.password!.hash);
-
-    if (!valid) throw new Error("Invalid credentials");
-
-    return user;
-  })
-);
+export async function verify(
+  password: string,
+  hashed: string
+): Promise<boolean> {
+  return new Promise((resolve, reject) => {
+    let [salt, key] = hashed.split(":");
+    crypto.scrypt(password, salt, LENGTH, (err, derivedKey) => {
+      if (err) reject(err);
+      resolve(key === derivedKey.toString("hex"));
+    });
+  });
+}

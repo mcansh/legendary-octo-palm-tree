@@ -11,22 +11,24 @@ import cuid from "cuid";
 
 import { uploadImageToCloudinary } from "~/upload.server";
 import { getTenant, getTenantSlug, updateTenant } from "~/utils.server";
-import { authenticator } from "~/auth.server";
+import { requireUser } from "~/session.server";
+import { prisma } from "~/db.server";
 
 export async function loader({ request }: DataFunctionArgs) {
-  let user = await authenticator.isAuthenticated(request, {
-    failureRedirect: "/login",
-  });
+  let user = await requireUser(request);
 
   let slug = getTenantSlug(request);
-  if (!user.tenants.find((t) => t.slug === slug)) {
-    throw new Response(null, { status: 403, statusText: "Forbidden" });
-  }
 
-  let tenant = await getTenant(slug);
+  let [tenant] = await prisma.tenant.findMany({
+    where: {
+      slug,
+      users: { some: { id: user.id } },
+    },
+    include: { images: true },
+  });
 
   if (!tenant) {
-    throw new Response("Tenant not found", { status: 404 });
+    throw new Response(null, { status: 404, statusText: "Not Found" });
   }
 
   return { tenant };

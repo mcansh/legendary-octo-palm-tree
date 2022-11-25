@@ -7,8 +7,11 @@ import {
   Scripts,
   ScrollRestoration,
 } from "@remix-run/react";
+import clsx from "clsx";
 
 import appStylesHref from "~/styles/app.css";
+
+import { useMatches } from "./matches";
 
 export const meta: MetaFunction = () => {
   return {
@@ -23,13 +26,16 @@ export const links: LinksFunction = () => {
 };
 
 export default function App() {
+  let matches = useMatches();
+  let handleBodyClassName = matches.map((match) => match.handle?.bodyClassName);
+
   return (
     <html lang="en" className="h-full">
       <head>
         <Meta />
         <Links />
       </head>
-      <body className="h-full">
+      <body className={clsx("h-full", handleBodyClassName)}>
         <Outlet />
         <ScrollRestoration />
         <Scripts />

@@ -1,16 +1,16 @@
 import type { DataFunctionArgs } from "@remix-run/node";
+import { json } from "@remix-run/node";
 import { redirect } from "@remix-run/node";
 import { Form } from "@remix-run/react";
 import slugify from "slugify";
 import { zfd } from "zod-form-data";
 
-import { authenticator } from "~/auth.server";
 import { prisma } from "~/db.server";
+import { requireUser } from "~/session.server";
 
 export async function loader({ request }: DataFunctionArgs) {
-  return await authenticator.isAuthenticated(request, {
-    failureRedirect: "/login",
-  });
+  let user = await requireUser(request);
+  return json({});
 }
 
 let schema = zfd.formData({ name: zfd.text() });

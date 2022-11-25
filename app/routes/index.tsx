@@ -4,28 +4,34 @@ import type { ThrownResponse } from "@remix-run/react";
 import { Form } from "@remix-run/react";
 import { useCatch, useLoaderData } from "@remix-run/react";
 
-import { authenticator } from "~/auth.server";
+import { prisma } from "~/db.server";
+import { getUserId } from "~/session.server";
 import { getTenant, getTenantSlug } from "~/utils.server";
 
 export async function loader({ request }: DataFunctionArgs) {
-  let user = await authenticator.isAuthenticated(request);
   let slug = getTenantSlug(request);
   let tenant = await getTenant(slug);
+
+  let userId = await getUserId(request);
+  let [user] = await prisma.user.findMany({
+    where: { id: userId, tenants: { some: { slug } } },
+  });
 
   if (!tenant) {
     throw json({ slug }, { status: 404, statusText: "Not Found" });
   }
+
+  console.log({ user });
 
   return json({ tenant, user });
 }
 
 export default function Index() {
   let data = useLoaderData<typeof loader>();
-  let userTenant = data.user?.tenants?.find((t) => t.slug === data.tenant.slug);
 
   return (
     <>
-      <nav className="flex justify-between items-center mx-8">
+      <nav className="flex justify-between items-center mx-8 my-4">
         <h1 className="text-xl">
           <a href="/">{data.tenant.name}</a>
         </h1>
@@ -36,7 +42,7 @@ export default function Index() {
           <li>
             <a href="/contact">Contact</a>
           </li>
-          {userTenant ? (
+          {data.user ? (
             <li>
               <Form method="post" action="/logout">
                 <button type="submit">Logout</button>
@@ -45,8 +51,8 @@ export default function Index() {
           ) : null}
         </ul>
       </nav>
-      <main className="mx-8 mt-6">
-        <div className="grid grid-cols-4 gap-4 justify-center items-center">
+      <main className="mx-8">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 justify-center items-center">
           {data.tenant.images.map((image) => (
             <img
               key={image.id}

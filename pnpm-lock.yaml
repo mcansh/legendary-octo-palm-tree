@@ -2,7 +2,6 @@ lockfileVersion: 5.4
 
 specifiers:
   '@mcansh/remix-secure-headers': ^0.6.2
-  '@node-rs/bcrypt': ^1.6.1
   '@prisma/client': ^4.6.1
   '@remix-run/dev': ^1.7.6
   '@remix-run/eslint-config': ^1.7.6
@@ -14,18 +13,18 @@ specifiers:
   '@types/react-dom': ^18.0.9
   autoprefixer: ^10.4.13
   cloudinary: ^1.32.0
+  clsx: ^1.2.1
   cuid: ^2.1.8
   eslint: ^8.28.0
   eslint-plugin-prefer-let: ^3.0.1
   isbot: ^3.6.5
   npm-run-all: ^4.1.5
   postcss: ^8.4.19
+  postcss-100vh-fix: ^1.0.2
   prettier: ^2.8.0
   prisma: ^4.6.1
   react: ^18.2.0
   react-dom: ^18.2.0
-  remix-auth: ^3.3.0
-  remix-auth-form: ^1.2.0
   slugify: ^1.6.5
   tailwindcss: ^3.2.4
   typescript: ^4.9.3
@@ -34,19 +33,17 @@ specifiers:
 
 dependencies:
   '@mcansh/remix-secure-headers': 0.6.2
-  '@node-rs/bcrypt': 1.6.1
   '@prisma/client': 4.6.1_prisma@4.6.1
   '@remix-run/node': 1.7.6_biqbaboplfbrettd7655fr4n2y
   '@remix-run/react': 1.7.6_biqbaboplfbrettd7655fr4n2y
   '@remix-run/serve': 1.7.6_biqbaboplfbrettd7655fr4n2y
   cloudinary: 1.32.0
+  clsx: 1.2.1
   cuid: 2.1.8
   isbot: 3.6.5
   prisma: 4.6.1
   react: 18.2.0
   react-dom: 18.2.0_react@18.2.0
-  remix-auth: 3.3.0_@remix-run+react@1.7.6
-  remix-auth-form: 1.2.0_@remix-run+react@1.7.6
   slugify: 1.6.5
   zod: 3.19.1
   zod-form-data: 1.2.4_zod@3.19.1
@@ -62,6 +59,7 @@ devDependencies:
   eslint-plugin-prefer-let: 3.0.1
   npm-run-all: 4.1.5
   postcss: 8.4.19
+  postcss-100vh-fix: 1.0.2_postcss@8.4.19
   prettier: 2.8.0
   tailwindcss: 3.2.4_postcss@8.4.19
   typescript: 4.9.3
@@ -1490,142 +1488,6 @@ packages:
       eslint-scope: 5.1.1
     dev: true
 
-  /@node-rs/bcrypt-android-arm-eabi/1.6.1:
-    resolution: {integrity: sha512-VZVF9r7i8530jX/FJyj7Neij58QDXcUkQXxkfAwP2LacDwXho1b9FsDGKWIh/JhNQk9O1Rf7MDj3L+Bx7FtYdw==}
-    engines: {node: '>= 10'}
-    cpu: [arm]
-    os: [android]
-    requiresBuild: true
-    dev: false
-    optional: true
-
-  /@node-rs/bcrypt-android-arm64/1.6.1:
-    resolution: {integrity: sha512-KGpWqSKKIKoKrW1QnzY7ihZREMiPXrMO7ps+3vtLdyiRBqigj10TB/zjolbomZAkb/53jhFkIJpYQkbK5hqh0Q==}
-    engines: {node: '>= 10'}
-    cpu: [arm64]
-    os: [android]
-    requiresBuild: true
-    dev: false
-    optional: true
-
-  /@node-rs/bcrypt-darwin-arm64/1.6.1:
-    resolution: {integrity: sha512-iUfuCYzqJTvi36ZEcEOgphb0C+4qI5aP+nIKsg/YEnerhbCKNRxhQXoxW1bayohpqjlenZ4jOKZXi1h2stMgPQ==}
-    engines: {node: '>= 10'}
-    cpu: [arm64]
-    os: [darwin]
-    requiresBuild: true
-    dev: false
-    optional: true
-
-  /@node-rs/bcrypt-darwin-x64/1.6.1:
-    resolution: {integrity: sha512-AQjjVgv5Z2jw8Krv8zbqxSgse6zBIYAnjVBHd74oEPDvdZcXomNc7Pv8eOletPAHRYaGcA2lrCBNEp5Un7ddsA==}
-    engines: {node: '>= 10'}
-    cpu: [x64]
-    os: [darwin]
-    requiresBuild: true
-    dev: false
-    optional: true
-
-  /@node-rs/bcrypt-freebsd-x64/1.6.1:
-    resolution: {integrity: sha512-Nb6c0r7KF8eugum9D4hliP5mXdKPh9dUan77xmxaMgGF8oyjdE7LA7W5picXvB3UTVJi4i7sJrTdtBjRXw+HYQ==}
-    engines: {node: '>= 10'}
-    cpu: [x64]
-    os: [freebsd]
-    requiresBuild: true
-    dev: false
-    optional: true
-
-  /@node-rs/bcrypt-linux-arm-gnueabihf/1.6.1:
-    resolution: {integrity: sha512-Hpy0pEXrxmIe0IYdWaH4vIka6xk2s4TdrnmQaPR7wSMfBQlGpyBXmgfCtPmGER/pb5Ft9H6q2l3Sh0w24X0PLQ==}
-    engines: {node: '>= 10'}
-    cpu: [arm]
-    os: [linux]
-    requiresBuild: true
-    dev: false
-    optional: true
-
-  /@node-rs/bcrypt-linux-arm64-gnu/1.6.1:
-    resolution: {integrity: sha512-R6ziaQw0pgMMzLVVD7Q76Iq01HGuwSNnbUgTgrqTbmw031dTlh7rnlJd1jXM6gBjR6kPTuV98hqMhMyHjrLKIg==}
-    engines: {node: '>= 10'}
-    cpu: [arm64]
-    os: [linux]
-    requiresBuild: true
-    dev: false
-    optional: true
-
-  /@node-rs/bcrypt-linux-arm64-musl/1.6.1:
-    resolution: {integrity: sha512-z9tlsRjOViHSM5MWzDCz/I+itn7gNsXE22EPC89u7mAoJ691oT5GpnmEHf9SbmLWxNLW4gMb/JuF/1vCUUX3NQ==}
-    engines: {node: '>= 10'}
-    cpu: [arm64]
-    os: [linux]
-    requiresBuild: true
-    dev: false
-    optional: true
-
-  /@node-rs/bcrypt-linux-x64-gnu/1.6.1:
-    resolution: {integrity: sha512-GwOFrzHN+Em+OhViA9hCmr/VGTVVl9OcASgG6ehT1PM7CB6zuhONBuvCUCoRyP03zY5ZkHbv8ODqAj9a9WGV2A==}
-    engines: {node: '>= 10'}
-    cpu: [x64]
-    os: [linux]
-    requiresBuild: true
-    dev: false
-    optional: true
-
-  /@node-rs/bcrypt-linux-x64-musl/1.6.1:
-    resolution: {integrity: sha512-koksZzVpwwmLsJTzUa0RfDgFNzSaXsUUo4wDpgQsn9MON0epSxrkZAc3Lw2oGrDRIhgH/kv/9aZExJEFo1Mj9A==}
-    engines: {node: '>= 10'}
-    cpu: [x64]
-    os: [linux]
-    requiresBuild: true
-    dev: false
-    optional: true
-
-  /@node-rs/bcrypt-win32-arm64-msvc/1.6.1:
-    resolution: {integrity: sha512-X7e5ekNENIVdDzChSWSXDXo1PSFCupv4VZz1m35dXYSjnB4r50ncoZo19mm8SHG5IBTOVpy6Wo6/MvgT7lzyqQ==}
-    engines: {node: '>= 10'}
-    cpu: [arm64]
-    os: [win32]
-    requiresBuild: true
-    dev: false
-    optional: true
-
-  /@node-rs/bcrypt-win32-ia32-msvc/1.6.1:
-    resolution: {integrity: sha512-rp2kChdJf0dqYoynZzY8MjcSWrdZ3/B3EszZMlEjDfj40EXF7TOYNIavk58qPm4m70II1l46bi51FStEjvA3bw==}
-    engines: {node: '>= 10'}
-    cpu: [ia32]
-    os: [win32]
-    requiresBuild: true
-    dev: false
-    optional: true
-
-  /@node-rs/bcrypt-win32-x64-msvc/1.6.1:
-    resolution: {integrity: sha512-6ykZKa9ydU9CFx2hbR1wuzpngx63MPK7mJMZgbetyOPpGEyixHDz/mSvpywptCGUEuuDbOE4rbc3Afw6dEf4TA==}
-    engines: {node: '>= 10'}
-    cpu: [x64]
-    os: [win32]
-    requiresBuild: true
-    dev: false
-    optional: true
-
-  /@node-rs/bcrypt/1.6.1:
-    resolution: {integrity: sha512-2R5Q1GE9AyW3+Zk2Io6B/lMBjjGYAzj3cePIEwKF3i8u59B6lIfnm0h9Bdr8+6xrgMErjSsfXlYHcNxiCPUaqA==}
-    engines: {node: '>= 10'}
-    optionalDependencies:
-      '@node-rs/bcrypt-android-arm-eabi': 1.6.1
-      '@node-rs/bcrypt-android-arm64': 1.6.1
-      '@node-rs/bcrypt-darwin-arm64': 1.6.1
-      '@node-rs/bcrypt-darwin-x64': 1.6.1
-      '@node-rs/bcrypt-freebsd-x64': 1.6.1
-      '@node-rs/bcrypt-linux-arm-gnueabihf': 1.6.1
-      '@node-rs/bcrypt-linux-arm64-gnu': 1.6.1
-      '@node-rs/bcrypt-linux-arm64-musl': 1.6.1
-      '@node-rs/bcrypt-linux-x64-gnu': 1.6.1
-      '@node-rs/bcrypt-linux-x64-musl': 1.6.1
-      '@node-rs/bcrypt-win32-arm64-msvc': 1.6.1
-      '@node-rs/bcrypt-win32-ia32-msvc': 1.6.1
-      '@node-rs/bcrypt-win32-x64-msvc': 1.6.1
-    dev: false
-
   /@nodelib/fs.scandir/2.1.5:
     resolution: {integrity: sha512-vq24Bq3ym5HEQm2NKCr3yXDwjc7vTsEThRDnkp2DK9p1uqLR+DHurm/NOTo0KG7HYHU7eppKZj3MyqYuMBf62g==}
     engines: {node: '>= 8'}
@@ -2901,6 +2763,11 @@ packages:
       proxy-agent: 5.0.0
     transitivePeerDependencies:
       - supports-color
+    dev: false
+
+  /clsx/1.2.1:
+    resolution: {integrity: sha512-EcR6r5a8bj6pu3ycsa/E/cKVGuTgZJZdsyUYHOksG/UHIiKfjxzRxYJpyVBwYaQeOvghal9fcc4PidlgzugAQg==}
+    engines: {node: '>=6'}
     dev: false
 
   /collection-visit/1.0.0:
@@ -6521,6 +6388,15 @@ packages:
     engines: {node: '>=0.10.0'}
     dev: true
 
+  /postcss-100vh-fix/1.0.2_postcss@8.4.19:
+    resolution: {integrity: sha512-t7vqk9AfjI4fXmWlQCEiMZFFhi1hro4WlECINI1TV6Qh1XapUJE++gCmNr95F5Hen/+bz1OmO+SiSB9TZmFmSg==}
+    engines: {node: '>=10.0'}
+    peerDependencies:
+      postcss: ^8.1.0
+    dependencies:
+      postcss: 8.4.19
+    dev: true
+
   /postcss-import/14.1.0_postcss@8.4.19:
     resolution: {integrity: sha512-flwI+Vgm4SElObFVPpTIT7SU7R3qk2L7PyduMcokiaVKuWv9d/U+Gm/QAd8NDLuykTWTkcrjOeD2Pp1rMeBTGw==}
     engines: {node: '>=10.0.0'}
@@ -6952,26 +6828,6 @@ packages:
       mdast-util-to-hast: 11.3.0
       unified: 10.1.2
     dev: true
-
-  /remix-auth-form/1.2.0_@remix-run+react@1.7.6:
-    resolution: {integrity: sha512-iJyDhvRBctP9cJBTsU54X9K+E03XzPCVxtXRCq/+Fd4A+yqSKPAfmnSP5MnIHOnjlCGwOino8XQcj5m+UFN7QQ==}
-    peerDependencies:
-      '@remix-run/server-runtime': ^1.0.0
-    dependencies:
-      remix-auth: 3.3.0_@remix-run+react@1.7.6
-    transitivePeerDependencies:
-      - '@remix-run/react'
-    dev: false
-
-  /remix-auth/3.3.0_@remix-run+react@1.7.6:
-    resolution: {integrity: sha512-sLY5s6DQF4OJp03HM/dIEw3tLfSOIowerS2QDTuvEVXoEA3IHVmk7QkvOKosWdVPbcnlRfwF6PbeBLKgo6vqsg==}
-    peerDependencies:
-      '@remix-run/react': ^1.0.0
-      '@remix-run/server-runtime': ^1.0.0
-    dependencies:
-      '@remix-run/react': 1.7.6_biqbaboplfbrettd7655fr4n2y
-      uuid: 8.3.2
-    dev: false
 
   /repeat-element/1.1.4:
     resolution: {integrity: sha512-LFiNfRcSu7KK3evMyYOuCzv3L10TW7yC1G2/+StMjK8Y6Vqd2MG7r/Qjw4ghtuCOjFvlnms/iMmLqpvW/ES/WQ==}
@@ -7968,11 +7824,6 @@ packages:
   /utils-merge/1.0.1:
     resolution: {integrity: sha1-n5VxD1CiZ5R7LMwSR0HBAoQn5xM=}
     engines: {node: '>= 0.4.0'}
-
-  /uuid/8.3.2:
-    resolution: {integrity: sha512-+NYs2QeMWy+GWFOEm9xnn6HCDp0l7QBD7ml8zLUmJ+93Q5NF0NocErnwkTkXVFNiX3/fpC6afS8Dhb/gz7R7eg==}
-    hasBin: true
-    dev: false
 
   /uvu/0.5.6:
     resolution: {integrity: sha512-+g8ENReyr8YsOc6fv/NVJs2vFdHBnBNdfE49rshrTzDWOlUx4Gq7KOS2GD8eqhy2j+Ejq29+SbKH8yjkAqXqoA==}
