@@ -1,17 +1,19 @@
-import type { LoaderArgs } from "@remix-run/node";
-import { useLoaderData } from "@remix-run/react";
+import type { DataFunctionArgs } from "@remix-run/node";
+import { json } from "@remix-run/node";
+import type { ThrownResponse } from "@remix-run/react";
+import { useCatch, useLoaderData } from "@remix-run/react";
 
 import { getTenant, getTenantSlug } from "~/utils.server";
 
-export async function loader({ request }: LoaderArgs) {
+export async function loader({ request }: DataFunctionArgs) {
   let slug = getTenantSlug(request);
   let tenant = await getTenant(slug);
 
   if (!tenant) {
-    throw new Response("Tenant not found", { status: 404 });
+    throw json({ slug }, { status: 404, statusText: "Not Found" });
   }
 
-  return { tenant };
+  return json({ tenant });
 }
 
 export default function Index() {
@@ -45,5 +47,35 @@ export default function Index() {
         </div>
       </main>
     </>
+  );
+}
+
+export function CatchBoundary() {
+  let caught = useCatch<ThrownResponse<number, { slug: string }>>();
+
+  if (caught.status === 404) {
+    return (
+      <div className="grid place-items-center h-full text-center">
+        <div>
+          <h1 className="text-3xl font-semibold">
+            {caught.status} {caught.statusText}
+          </h1>
+          <p className="text-xl mt-4">
+            Tenant "{caught.data.slug}" does not exist
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="grid place-items-center h-full text-center">
+      <div>
+        <h1>Something went wrong</h1>
+        <h2>
+          {caught.status} {caught.statusText}
+        </h2>
+      </div>
+    </div>
   );
 }
