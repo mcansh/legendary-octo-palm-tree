@@ -17,7 +17,7 @@ let secureHeaders = createSecureHeaders({
   "Content-Security-Policy": {
     defaultSrc: ["'self'"],
     scriptSrc: ["'self'", "'unsafe-inline'"],
-    connectSrc: process.env.NODE_ENV === "production" ? [] : ["*"],
+    connectSrc: process.env.NODE_ENV === "production" ? ["'self'"] : ["*"],
     imgSrc: ["'self'", "https://res.cloudinary.com"],
   },
   "Strict-Transport-Security": {
