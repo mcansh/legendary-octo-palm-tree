@@ -4,26 +4,23 @@ import type { ThrownResponse } from "@remix-run/react";
 import { Form } from "@remix-run/react";
 import { useCatch, useLoaderData } from "@remix-run/react";
 
-import { prisma } from "~/db.server";
+import { doesUserBelongToTenant } from "~/models/tenant";
 import { getUserId } from "~/session.server";
-import { getTenant, getTenantSlug } from "~/utils.server";
+import { getTenantBySlug, getTenantSlug } from "~/models/tenant";
 
 export async function loader({ request }: DataFunctionArgs) {
   let slug = getTenantSlug(request);
-  let tenant = await getTenant(slug);
+  let tenant = await getTenantBySlug(slug);
 
   let userId = await getUserId(request);
-  let [user] = await prisma.user.findMany({
-    where: { id: userId, tenants: { some: { slug } } },
-  });
 
   if (!tenant) {
     throw json({ slug }, { status: 404, statusText: "Not Found" });
   }
 
-  console.log({ user });
+  let userIsMember = await doesUserBelongToTenant(userId, tenant.id);
 
-  return json({ tenant, user });
+  return json({ tenant, userIsMember });
 }
 
 export default function Index() {
@@ -42,7 +39,7 @@ export default function Index() {
           <li>
             <a href="/contact">Contact</a>
           </li>
-          {data.user ? (
+          {data.userIsMember ? (
             <li>
               <Form method="post" action="/logout">
                 <button type="submit">Logout</button>

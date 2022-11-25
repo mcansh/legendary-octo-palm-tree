@@ -10,7 +10,7 @@ import { zfd } from "zod-form-data";
 import cuid from "cuid";
 
 import { uploadImageToCloudinary } from "~/upload.server";
-import { getTenant, getTenantSlug, updateTenant } from "~/utils.server";
+import { getTenantBySlug, getTenantSlug, updateTenant } from "~/models/tenant";
 import { requireUser } from "~/session.server";
 import { prisma } from "~/db.server";
 
@@ -51,7 +51,7 @@ const schema = zfd
 
 export async function action({ request }: DataFunctionArgs) {
   let slug = getTenantSlug(request);
-  let tenant = await getTenant(slug);
+  let tenant = await getTenantBySlug(slug);
 
   if (!tenant) {
     throw new Response("Tenant not found", { status: 404 });
