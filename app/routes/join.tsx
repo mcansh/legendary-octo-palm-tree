@@ -1,33 +1,23 @@
-import type { ActionArgs } from "@remix-run/node";
+import type { DataFunctionArgs } from "@remix-run/node";
 import { redirect } from "@remix-run/node";
 import { Form } from "@remix-run/react";
 import slugify from "slugify";
+import { zfd } from "zod-form-data";
 
 import { prisma } from "~/db.server";
 
-export async function action({ request }: ActionArgs) {
+let schema = zfd.formData({ name: zfd.text() });
+
+export async function action({ request }: DataFunctionArgs) {
   let url = new URL(request.url);
   let formData = new URLSearchParams(await request.text());
-  let name = formData.get("name");
-  if (typeof name !== "string") {
-    throw new Response("Invalid name", { status: 400 });
-  }
+  let data = schema.parse(formData);
 
-  let slug = slugify(name, { lower: true });
+  let slug = slugify(data.name, { lower: true });
 
-  let tenant = await prisma.tenant.create({
-    data: {
-      name,
-      slug,
-    },
-  });
+  let tenant = await prisma.tenant.create({ data: { name: data.name, slug } });
 
-  if (process.env.NODE_ENV === "development") {
-    let search = new URLSearchParams({ tenantId: tenant.id }).toString();
-    return redirect(`?${search}`);
-  }
-
-  return redirect(`https://${tenant.slug}.${url.host}`);
+  return redirect(`${url.protocol}//${tenant.slug}.localhost:3000`);
 }
 
 export default function JoinPage() {
