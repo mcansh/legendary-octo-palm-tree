@@ -17,6 +17,7 @@ export async function loader({ request }: DataFunctionArgs) {
 let loginSchema = zfd.formData({
   email: zfd.text(z.string().email()),
   password: zfd.text(z.string().min(8)),
+  "remember-me": zfd.checkbox(),
 });
 
 export async function action({ request }: DataFunctionArgs) {
@@ -34,7 +35,7 @@ export async function action({ request }: DataFunctionArgs) {
   return createUserSession({
     request,
     redirectTo: "/",
-    remember: true,
+    remember: result.data["remember-me"],
     userId: user.id,
   });
 }
