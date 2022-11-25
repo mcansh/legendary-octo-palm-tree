@@ -7,6 +7,7 @@ import { redirect } from "@remix-run/node";
 import { Form, useActionData, useLoaderData } from "@remix-run/react";
 import { z } from "zod";
 import { zfd } from "zod-form-data";
+import cuid from "cuid";
 
 import { uploadImageToCloudinary } from "~/upload.server";
 import { getTenant, getTenantSlug, updateTenant } from "~/utils.server";
@@ -49,7 +50,8 @@ export async function action({ request }: DataFunctionArgs) {
     // our custom upload handler
     async ({ name, data }) => {
       if (name !== "image") return undefined;
-      let uploadedImage = await uploadImageToCloudinary(data);
+      let public_id = `${slug}/${cuid()}`;
+      let uploadedImage = await uploadImageToCloudinary(data, { public_id });
       return uploadedImage.secure_url;
     },
     // fallback to memory for everything else
