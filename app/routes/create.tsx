@@ -7,16 +7,16 @@ import { zfd } from "zod-form-data";
 
 import { prisma } from "~/db.server";
 import { requireUser } from "~/session.server";
+import { createTenantUrl } from "~/utils.server";
 
 export async function loader({ request }: DataFunctionArgs) {
-  let user = await requireUser(request);
+  await requireUser(request);
   return json({});
 }
 
 let schema = zfd.formData({ name: zfd.text() });
 
 export async function action({ request }: DataFunctionArgs) {
-  let url = new URL(request.url);
   let formData = new URLSearchParams(await request.text());
   let data = schema.parse(formData);
 
@@ -24,7 +24,7 @@ export async function action({ request }: DataFunctionArgs) {
 
   let tenant = await prisma.tenant.create({ data: { name: data.name, slug } });
 
-  return redirect(`${url.protocol}//${tenant.slug}.localhost:3000`);
+  return redirect(createTenantUrl(request, tenant.slug));
 }
 
 export default function CreateATenant() {

@@ -2,10 +2,7 @@ import { createCookieSessionStorage, redirect } from "@remix-run/node";
 import type { User } from "@prisma/client";
 
 import { getUserById } from "./models/user";
-
-if (!process.env.SESSION_SECRET) {
-  throw new Error("Please define the SESSION_SECRET environment variable");
-}
+import { SESSION_SECRET } from "./constants.server";
 
 export let sessionStorage = createCookieSessionStorage({
   cookie: {
@@ -13,7 +10,7 @@ export let sessionStorage = createCookieSessionStorage({
     sameSite: "lax",
     path: "/",
     httpOnly: true,
-    secrets: [process.env.SESSION_SECRET],
+    secrets: [SESSION_SECRET],
     secure: process.env.NODE_ENV === "production",
   },
 });

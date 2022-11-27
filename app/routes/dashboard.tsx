@@ -4,12 +4,10 @@ import { Link, useLoaderData } from "@remix-run/react";
 
 import { getTenantsByUserId } from "~/models/tenant";
 import { requireUser } from "~/session.server";
-import { rootDomainOnly } from "~/utils.server";
+import { createTenantUrl, rootDomainOnly } from "~/utils.server";
 
 export async function loader({ request }: DataFunctionArgs) {
   let user = await requireUser(request);
-
-  let url = new URL(request.url);
 
   // only allow this route on the root domain
   rootDomainOnly(request);
@@ -20,7 +18,7 @@ export async function loader({ request }: DataFunctionArgs) {
     tenants: tenants.map((tenant) => {
       return {
         ...tenant,
-        url: `${url.protocol}//${tenant.slug}.${url.host.split(".").pop()}`,
+        url: createTenantUrl(request, tenant.slug),
       };
     }),
   });
