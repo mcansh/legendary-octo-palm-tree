@@ -2,7 +2,7 @@ import { createCookieSessionStorage, redirect } from "@remix-run/node";
 import type { User } from "@prisma/client";
 
 import { getUserById } from "./models/user";
-import { SESSION_SECRET } from "./constants.server";
+import { ROOT_DOMAIN, SESSION_SECRET } from "./constants.server";
 
 export let sessionStorage = createCookieSessionStorage({
   cookie: {
@@ -10,6 +10,7 @@ export let sessionStorage = createCookieSessionStorage({
     sameSite: "lax",
     path: "/",
     httpOnly: true,
+    domain: ROOT_DOMAIN,
     secrets: [SESSION_SECRET],
     secure: process.env.NODE_ENV === "production",
   },
@@ -80,7 +81,6 @@ export async function createUserSession({
         maxAge: remember
           ? 60 * 60 * 24 * 7 // 7 days
           : undefined,
-        domain: new URL(request.url).hostname,
       }),
     },
   });
