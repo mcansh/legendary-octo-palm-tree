@@ -13,7 +13,6 @@ export let sessionStorage = createCookieSessionStorage({
     sameSite: "lax",
     path: "/",
     httpOnly: true,
-    domain: process.env.NODE_ENV === "production" ? undefined : ".localhost",
     secrets: [process.env.SESSION_SECRET],
     secure: process.env.NODE_ENV === "production",
   },
@@ -84,6 +83,7 @@ export async function createUserSession({
         maxAge: remember
           ? 60 * 60 * 24 * 7 // 7 days
           : undefined,
+        domain: new URL(request.url).hostname,
       }),
     },
   });
