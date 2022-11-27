@@ -1,5 +1,5 @@
 import { PassThrough } from "stream";
-import type { EntryContext } from "@remix-run/node";
+import type { EntryContext, HandleDataRequestFunction } from "@remix-run/node";
 import { Response } from "@remix-run/node";
 import { RemixServer } from "@remix-run/react";
 import isbot from "isbot";
@@ -18,7 +18,7 @@ let secureHeaders = createSecureHeaders({
     defaultSrc: ["'self'"],
     scriptSrc: ["'self'", "'unsafe-inline'"],
     connectSrc: process.env.NODE_ENV === "production" ? ["'self'"] : ["*"],
-    imgSrc: ["'self'", "https://res.cloudinary.com"],
+    imgSrc: ["'self'", "https://res.cloudinary.com", "data:"],
   },
   "Strict-Transport-Security": {
     maxAge: 31536000,
@@ -27,6 +27,17 @@ let secureHeaders = createSecureHeaders({
   },
 });
 
+function applyHeaders(responseHeaders: Headers) {
+  responseHeaders.append(
+    "Link",
+    "<https://res.cloudinary.com>; rel=preconnect"
+  );
+
+  for (let header of secureHeaders) {
+    responseHeaders.set(...header);
+  }
+}
+
 export default function handleRequest(
   request: Request,
   responseStatusCode: number,
@@ -34,9 +45,7 @@ export default function handleRequest(
   remixContext: EntryContext
 ) {
   responseHeaders.set("Content-Type", "text/html");
-  for (let header of secureHeaders) {
-    responseHeaders.set(...header);
-  }
+  applyHeaders(responseHeaders);
 
   return isbot(request.headers.get("user-agent"))
     ? handleBotRequest(
@@ -77,12 +86,11 @@ function handleBotRequest(
 
           pipe(body);
         },
-        onShellError(error: unknown) {
+        onShellError(error) {
           reject(error);
         },
-        onError(error: unknown) {
+        onError(error) {
           didError = true;
-
           console.error(error);
         },
       }
@@ -116,12 +124,11 @@ function handleBrowserRequest(
 
           pipe(body);
         },
-        onShellError(err: unknown) {
-          reject(err);
+        onShellError(error) {
+          reject(error);
         },
-        onError(error: unknown) {
+        onError(error) {
           didError = true;
-
           console.error(error);
         },
       }
@@ -130,3 +137,8 @@ function handleBrowserRequest(
     setTimeout(abort, ABORT_DELAY);
   });
 }
+
+export const handleDataRequest: HandleDataRequestFunction = (response) => {
+  applyHeaders(response.headers);
+  return response;
+};
