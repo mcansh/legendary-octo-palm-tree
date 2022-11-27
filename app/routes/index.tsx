@@ -7,6 +7,7 @@ import { useCatch, useLoaderData } from "@remix-run/react";
 import { doesUserBelongToTenant } from "~/models/tenant";
 import { getUserId } from "~/session.server";
 import { getTenantBySlug, getTenantSlug } from "~/models/tenant";
+import { buildImageUrl } from "~/utils.server";
 
 export async function loader({ request }: DataFunctionArgs) {
   let slug = getTenantSlug(request);
@@ -20,7 +21,22 @@ export async function loader({ request }: DataFunctionArgs) {
 
   let userIsMember = await doesUserBelongToTenant(userId, tenant.id);
 
-  return json({ tenant, userIsMember });
+  return json({
+    tenant: {
+      ...tenant,
+      images: tenant.images.map((image) => {
+        return {
+          ...image,
+          url: buildImageUrl(image.public_id, {
+            transformations: {
+              resize: { height: 400, width: 400 },
+            },
+          }),
+        };
+      }),
+    },
+    userIsMember,
+  });
 }
 
 export default function Index() {

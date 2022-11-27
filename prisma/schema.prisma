@@ -8,35 +8,35 @@ datasource db {
 }
 
 model Tenant {
-  id String @id @default(cuid())
+  id   String @id @default(cuid())
   slug String @unique
   name String
 
   images Image[]
-  users User[]
+  users  User[]
 }
 
 model Image {
-  id String @id @default(cuid())
-  alt String
-  url String
+  id        String @id @default(cuid())
+  alt       String
+  public_id String
 
-  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  tenant   Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   tenantId String
 }
 
 model User {
-  id String @id @default(cuid())
-  email String @unique
-  given_name String
+  id          String @id @default(cuid())
+  email       String @unique
+  given_name  String
   family_name String
 
   password Password?
-  tenants Tenant[]
+  tenants  Tenant[]
 }
 
 model Password {
-  hash String
+  hash   String
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   userId String @unique
 }

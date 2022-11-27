@@ -13,8 +13,11 @@ import { zfd } from "zod-form-data";
 import { prisma } from "~/db.server";
 import { getTenantBySlug, updateTenant } from "~/models/tenant";
 import { requireUser } from "~/session.server";
-import { uploadImageToCloudinary } from "~/upload.server";
-import { rootDomainOnly } from "~/utils.server";
+import {
+  deleteImageFromCloudinary,
+  uploadImageToCloudinary,
+} from "~/upload.server";
+import { rootDomainOnly, buildImageUrl } from "~/utils.server";
 
 export async function loader({ request, params }: DataFunctionArgs) {
   await requireUser(request);
@@ -33,13 +36,23 @@ export async function loader({ request, params }: DataFunctionArgs) {
     });
   }
 
-  return json({ tenant });
+  return json({
+    tenant: {
+      ...tenant,
+      images: tenant.images.map((image) => {
+        return {
+          ...image,
+          url: buildImageUrl(image.public_id),
+        };
+      }),
+    },
+  });
 }
 
 const schema = zfd
   .formData({
     name: zfd.text(z.string().min(1)),
-    image: zfd.text(z.string().url().optional()),
+    image: zfd.text(z.string().optional()),
     imageAltText: zfd.text(z.string().optional()),
   })
   .refine((data) => {
@@ -68,7 +81,7 @@ export async function action({ request, params }: DataFunctionArgs) {
       if (name !== "image") return undefined;
       let public_id = `${params.slug}/${cuid()}`;
       let uploadedImage = await uploadImageToCloudinary(data, { public_id });
-      return uploadedImage.secure_url;
+      return uploadedImage.public_id;
     },
     // fallback to memory for everything else
     unstable_createMemoryUploadHandler()
@@ -85,7 +98,7 @@ export async function action({ request, params }: DataFunctionArgs) {
       },
     });
 
-    // await deleteImageFromCloudinary(deleted.url);
+    await deleteImageFromCloudinary(deleted.public_id);
 
     return null;
   }
@@ -106,7 +119,10 @@ export async function action({ request, params }: DataFunctionArgs) {
     images: {
       create:
         result.data.image && result.data.imageAltText
-          ? { url: result.data.image, alt: result.data.imageAltText }
+          ? {
+              alt: result.data.imageAltText,
+              public_id: result.data.image,
+            }
           : undefined,
     },
   });

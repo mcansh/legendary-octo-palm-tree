@@ -1,6 +1,20 @@
 import { writeAsyncIterableToWritable } from "@remix-run/node";
-import type { UploadApiOptions, UploadApiResponse } from "cloudinary";
+import type {
+  UploadApiOptions,
+  UploadApiResponse,
+  DeleteApiResponse,
+} from "cloudinary";
 import cloudinary from "cloudinary";
+
+export async function deleteImageFromCloudinary(
+  publicId: string
+): Promise<DeleteApiResponse> {
+  return new Promise((resolve, reject) => {
+    cloudinary.v2.uploader.destroy(publicId, (error, result) =>
+      error ? reject(error) : resolve(result)
+    );
+  });
+}
 
 export async function uploadImageToCloudinary(
   data: AsyncIterable<Uint8Array>,
