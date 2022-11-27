@@ -7,6 +7,7 @@ import { zfd } from "zod-form-data";
 import type { RouteHandle } from "~/matches";
 import { verifyLogin } from "~/models/user";
 import { createUserSession, getUserId } from "~/session.server";
+import { getReturnTo } from "~/utils.server";
 
 export async function loader({ request }: DataFunctionArgs) {
   let userId = await getUserId(request);
@@ -34,7 +35,7 @@ export async function action({ request }: DataFunctionArgs) {
 
   return createUserSession({
     request,
-    redirectTo: "/",
+    redirectTo: getReturnTo(new URL(request.url).searchParams),
     remember: result.data["remember-me"],
     userId: user.id,
   });

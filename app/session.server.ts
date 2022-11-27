@@ -13,6 +13,7 @@ export let sessionStorage = createCookieSessionStorage({
     sameSite: "lax",
     path: "/",
     httpOnly: true,
+    domain: process.env.NODE_ENV === "production" ? undefined : ".localhost",
     secrets: [process.env.SESSION_SECRET],
     secure: process.env.NODE_ENV === "production",
   },
@@ -49,7 +50,7 @@ export async function requireUserId(
 ) {
   let userId = await getUserId(request);
   if (!userId) {
-    let searchParams = new URLSearchParams([["redirectTo", redirectTo]]);
+    let searchParams = new URLSearchParams([["return_to", redirectTo]]);
     throw redirect(`/login?${searchParams}`);
   }
   return userId;

@@ -9,6 +9,7 @@ import { zfd } from "zod-form-data";
 import type { RouteHandle } from "~/matches";
 import { createUser, getUserByEmail } from "~/models/user";
 import { createUserSession, getUserId } from "~/session.server";
+import { getReturnTo } from "~/utils.server";
 
 let joinSchema = zfd.formData({
   email: zfd.text(z.string().email()),
@@ -47,7 +48,7 @@ export async function action({ request }: DataFunctionArgs) {
 
   return createUserSession({
     request,
-    redirectTo: "/",
+    redirectTo: getReturnTo(new URL(request.url).searchParams),
     remember: false,
     userId: user.id,
   });
