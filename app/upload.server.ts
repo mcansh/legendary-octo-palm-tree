@@ -20,16 +20,28 @@ export async function uploadImageToCloudinary(
   data: AsyncIterable<Uint8Array>,
   options: Omit<UploadApiOptions, "folder"> = {}
 ) {
-  let uploadPromise = new Promise<UploadApiResponse>(
+  let uploadPromise = new Promise<UploadApiResponse | undefined>(
     async (resolve, reject) => {
       let uploadStream = cloudinary.v2.uploader.upload_stream(
         { folder: "remix", ...options },
         (error, result) => {
-          if (error || !result) {
-            reject(error);
-            return;
+          // if we have no file, we'll just duck out and resolve undefined
+          if (error?.message.toLowerCase() === "empty file") {
+            return resolve(undefined);
           }
-          resolve(result);
+
+          // if we have a result, we'll resolve it
+          if (result) {
+            return resolve(result);
+          }
+
+          // if we have an error, we'll reject the promise
+          if (error) {
+            reject(error);
+          }
+
+          // if we have no result and no error, we'll reject the promise
+          reject(undefined);
         }
       );
       await writeAsyncIterableToWritable(data, uploadStream);
