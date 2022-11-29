@@ -1,4 +1,5 @@
-import type { LinksFunction, MetaFunction } from "@remix-run/node";
+import type { LinksFunction } from "@remix-run/node";
+import type { V2_MetaFunction } from "@remix-run/react/dist/routeModules";
 import {
   Links,
   LiveReload,
@@ -13,12 +14,11 @@ import appStylesHref from "~/styles/app.css";
 
 import { useMatches } from "./matches";
 
-export const meta: MetaFunction = () => {
-  return {
-    charset: "utf-8",
-    title: "New Remix App",
-    viewport: "width=device-width,initial-scale=1",
-  };
+export const meta: V2_MetaFunction = () => {
+  return [
+    { charSet: "utf-8" },
+    { name: "viewport", content: "width=device-width, initial-scale=1" },
+  ];
 };
 
 export const links: LinksFunction = () => {

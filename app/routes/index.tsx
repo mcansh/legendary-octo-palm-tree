@@ -1,5 +1,9 @@
-import type { DataFunctionArgs } from "@remix-run/node";
+import type { DataFunctionArgs, SerializeFrom } from "@remix-run/node";
 import { json } from "@remix-run/node";
+import type {
+  V2_HtmlMetaDescriptor,
+  V2_MetaFunction,
+} from "@remix-run/react/dist/routeModules";
 import type { ThrownResponse } from "@remix-run/react";
 import { Form } from "@remix-run/react";
 import { useCatch, useLoaderData } from "@remix-run/react";
@@ -47,6 +51,17 @@ export async function loader({ request }: DataFunctionArgs) {
     userIsMember,
   });
 }
+
+export const meta: V2_MetaFunction = (args) => {
+  let data: SerializeFrom<typeof loader> | undefined = args.data;
+  let title = data?.tenant ? data.tenant.name : "Home";
+  return [
+    ...(args.matches.map(
+      (match) => match.meta
+    ) as unknown as V2_HtmlMetaDescriptor[]),
+    { title },
+  ];
+};
 
 export default function Index() {
   let data = useLoaderData<typeof loader>();
