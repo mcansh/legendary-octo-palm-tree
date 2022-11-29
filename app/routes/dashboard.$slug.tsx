@@ -1,6 +1,5 @@
 import type { DataFunctionArgs } from "@remix-run/node";
 import { redirect } from "@remix-run/node";
-import { ROOT_DOMAIN } from "~/constants.server";
 
 import { requireUser } from "~/session.server";
 import { createTenantUrl } from "~/utils.server";

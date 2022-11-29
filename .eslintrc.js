@@ -7,5 +7,5 @@ module.exports = {
   ],
   rules: {
     "react/jsx-no-leaked-render": ["error", { validStrategies: ["ternary"] }],
-  }
+  },
 };

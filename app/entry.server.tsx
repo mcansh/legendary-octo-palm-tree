@@ -16,6 +16,7 @@ let secureHeaders = createSecureHeaders({
   "X-DNS-Prefetch-Control": "on",
   "Content-Security-Policy": {
     defaultSrc: ["'self'"],
+    styleSrc: ["'self'", "'unsafe-inline'"],
     scriptSrc: ["'self'", "'unsafe-inline'"],
     connectSrc: process.env.NODE_ENV === "production" ? ["'self'"] : ["*"],
     imgSrc: ["'self'", "https://res.cloudinary.com", "data:"],

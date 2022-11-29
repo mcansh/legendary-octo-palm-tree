@@ -3,20 +3,29 @@ import { json } from "@remix-run/node";
 import type { ThrownResponse } from "@remix-run/react";
 import { Form } from "@remix-run/react";
 import { useCatch, useLoaderData } from "@remix-run/react";
+import { notFound } from "remix-utils";
 
 import { doesUserBelongToTenant } from "~/models/tenant";
 import { getUserId } from "~/session.server";
 import { getTenantBySlug, getTenantSlug } from "~/models/tenant";
 import { buildImageUrl } from "~/utils.server";
+import { ROOT_DOMAIN } from "~/constants.server";
+import { Home } from "~/components/home";
 
 export async function loader({ request }: DataFunctionArgs) {
+  let url = new URL(request.url);
+
+  if (url.hostname === ROOT_DOMAIN) {
+    return json({ tenant: null });
+  }
+
   let slug = getTenantSlug(request);
   let tenant = await getTenantBySlug(slug);
 
   let userId = await getUserId(request);
 
   if (!tenant) {
-    throw json({ slug }, { status: 404, statusText: "Not Found" });
+    throw notFound({ slug });
   }
 
   let userIsMember = await doesUserBelongToTenant(userId, tenant.id);
@@ -41,6 +50,10 @@ export async function loader({ request }: DataFunctionArgs) {
 
 export default function Index() {
   let data = useLoaderData<typeof loader>();
+
+  if (!data.tenant) {
+    return <Home />;
+  }
 
   return (
     <>

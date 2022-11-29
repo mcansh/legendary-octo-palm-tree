@@ -9,6 +9,7 @@ import { useFetcher, useLoaderData } from "@remix-run/react";
 import cuid from "cuid";
 import { z } from "zod";
 import { zfd } from "zod-form-data";
+import { notFound } from "remix-utils";
 
 import { prisma } from "~/db.server";
 import { getTenantBySlug, updateTenant } from "~/models/tenant";
@@ -30,10 +31,7 @@ export async function loader({ request, params }: DataFunctionArgs) {
   let tenant = await getTenantBySlug(params.slug);
 
   if (!tenant) {
-    throw new Response("Tenant not found", {
-      status: 404,
-      statusText: "Not Found",
-    });
+    throw notFound(`Tenant ${params.slug} not found`);
   }
 
   return json({
@@ -42,45 +40,50 @@ export async function loader({ request, params }: DataFunctionArgs) {
       images: tenant.images.map((image) => {
         return {
           ...image,
-          url: buildImageUrl(image.public_id),
+          url: buildImageUrl(image.public_id, {
+            transformations: { resize: { width: 400, height: 400 } },
+          }),
         };
       }),
     },
   });
 }
 
-const schema = zfd
-  .formData({
-    name: zfd.text(z.string().min(1)),
-    image: zfd.text(z.string().optional()),
-    imageAltText: zfd.text(z.string().optional()),
-  })
-  .refine((data) => {
-    if (data.image && data.imageAltText) {
-      return {
-        path: ["imageAltText"],
-        message: "Image alt text is required when an image is provided",
-      };
-    }
-  });
+const schema = zfd.formData(
+  z
+    .object({
+      name: zfd.text(z.string().optional()),
+      image: zfd.text(z.string().optional()),
+      imageAltText: zfd.text(z.string().optional()),
+    })
+    .refine((data) => {
+      if (data.image && !data.imageAltText) {
+        return {
+          path: ["imageAltText"],
+          message: "Image alt text is required when an image is provided",
+        };
+      }
+    })
+);
 
 export async function action({ request, params }: DataFunctionArgs) {
   if (!params.slug) throw new Error("missing tenant slug");
   let tenant = await getTenantBySlug(params.slug);
 
   if (!tenant) {
-    throw new Response("Tenant not found", {
-      status: 404,
-      statusText: "Not Found",
-    });
+    throw notFound("Tenant not found");
   }
 
   let uploadHandler = unstable_composeUploadHandlers(
     // our custom upload handler
     async ({ name, data }) => {
-      if (name !== "image") return undefined;
+      if (name !== "image") return "";
       let public_id = `${params.slug}/${cuid()}`;
       let uploadedImage = await uploadImageToCloudinary(data, { public_id });
+      if (!uploadedImage) {
+        console.log(`no image uploaded for ${name}`);
+        return "";
+      }
       return uploadedImage.public_id;
     },
     // fallback to memory for everything else
@@ -100,13 +103,13 @@ export async function action({ request, params }: DataFunctionArgs) {
 
     await deleteImageFromCloudinary(deleted.public_id);
 
-    return null;
+    return json({ errors: null });
   }
 
   let result = schema.safeParse(formData);
 
   if (!result.success) {
-    console.log(result.error);
+    console.log(result.error.formErrors.fieldErrors);
 
     return json(
       { errors: result.error.formErrors.fieldErrors },
@@ -127,7 +130,7 @@ export async function action({ request, params }: DataFunctionArgs) {
     },
   });
 
-  return null;
+  return json({ errors: null });
 }
 
 export default function Dashboard() {
@@ -148,16 +151,14 @@ export default function Dashboard() {
             name="name"
             type="text"
             defaultValue={data.tenant.name}
-            // aria-invalid={Boolean(fetcher.data?.)}
-            // aria-describedby={
-            //   actionData?.errors.name ? "name-error" : undefined
-            // }
+            aria-invalid={Boolean(fetcher.data?.errors?.name)}
+            aria-describedby={
+              fetcher.data?.errors?.name ? "name-error" : undefined
+            }
           />
-          {/* {actionData?.errors.name ? (
-            <span className="text-red-500" id="name-error">
-              {actionData.errors.name}
-            </span>
-          ) : null} */}
+          {fetcher.data?.errors?.name ? (
+            <ErrorMessages errors={fetcher.data.errors.name} id="name-error" />
+          ) : null}
         </label>
 
         <label className="space-x-2">
@@ -165,16 +166,17 @@ export default function Dashboard() {
           <input
             name="image"
             type="file"
-            // aria-invalid={Boolean(actionData?.errors.image)}
-            // aria-describedby={
-            //   actionData?.errors.image ? "image-error" : undefined
-            // }
+            aria-invalid={Boolean(fetcher.data?.errors?.image)}
+            aria-describedby={
+              fetcher.data?.errors?.image ? "image-error" : undefined
+            }
           />
-          {/* {actionData?.errors.image ? (
-            <span className="text-red-500" id="image-error">
-              {actionData.errors.image}
-            </span>
-          ) : null} */}
+          {fetcher.data?.errors?.image ? (
+            <ErrorMessages
+              errors={fetcher.data.errors.image}
+              id="image-error"
+            />
+          ) : null}
         </label>
 
         <label className="space-x-2">
@@ -182,16 +184,19 @@ export default function Dashboard() {
           <input
             name="imageAltText"
             type="text"
-            // aria-invalid={Boolean(actionData?.errors.imageAltText)}
-            // aria-describedby={
-            //   actionData?.errors.imageAltText ? "imageAltText-error" : undefined
-            // }
+            aria-invalid={Boolean(fetcher.data?.errors?.imageAltText)}
+            aria-describedby={
+              fetcher.data?.errors?.imageAltText
+                ? "imageAltText-error"
+                : undefined
+            }
           />
-          {/* {actionData?.errors.imageAltText ? (
-            <span className="text-red-500" id="imageAltText-error">
-              {actionData.errors.imageAltText}
-            </span>
-          ) : null} */}
+          {fetcher.data?.errors?.imageAltText ? (
+            <ErrorMessages
+              errors={fetcher.data.errors.imageAltText}
+              id="imageAltText-error"
+            />
+          ) : null}
         </label>
 
         <button
@@ -216,5 +221,15 @@ export default function Dashboard() {
         );
       })}
     </div>
+  );
+}
+
+function ErrorMessages({ errors, id }: { errors: Array<string>; id: string }) {
+  return (
+    <ul className="text-red-500 list-disc pl-4" id={id}>
+      {errors.map((error) => (
+        <li key={error}>{error}</li>
+      ))}
+    </ul>
   );
 }
