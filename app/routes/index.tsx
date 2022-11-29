@@ -97,18 +97,7 @@ export function CatchBoundary() {
   let caught = useCatch<ThrownResponse<number, { slug: string }>>();
 
   if (caught.status === 404) {
-    return (
-      <div className="grid place-items-center h-full text-center">
-        <div>
-          <h1 className="text-3xl font-semibold">
-            {caught.status} {caught.statusText}
-          </h1>
-          <p className="text-xl mt-4">
-            Tenant "{caught.data.slug}" does not exist
-          </p>
-        </div>
-      </div>
-    );
+    return <Home />;
   }
 
   return (
