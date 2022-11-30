@@ -17,24 +17,30 @@ import { ROOT_DOMAIN } from "~/constants.server";
 import { Home } from "~/components/home";
 
 export async function loader({ request }: DataFunctionArgs) {
+  let userId = await getUserId(request);
+
   let url = new URL(request.url);
 
   if (url.hostname === ROOT_DOMAIN) {
-    return json({ tenant: null });
+    return json({
+      tenant: null,
+      userId,
+      userIsMember: null,
+    });
   }
 
   let slug = getTenantSlug(request);
   let tenant = await getTenantBySlug(slug);
 
-  let userId = await getUserId(request);
-
   if (!tenant) {
-    throw notFound({ slug });
+    throw notFound({ slug, userId, userIsMember: null });
   }
 
   let userIsMember = await doesUserBelongToTenant(userId, tenant.id);
 
   return json({
+    userId,
+    userIsMember,
     tenant: {
       ...tenant,
       images: tenant.images.map((image) => {
@@ -48,7 +54,6 @@ export async function loader({ request }: DataFunctionArgs) {
         };
       }),
     },
-    userIsMember,
   });
 }
 
@@ -67,7 +72,7 @@ export default function Index() {
   let data = useLoaderData<typeof loader>();
 
   if (!data.tenant) {
-    return <Home />;
+    return <Home loggedIn={!!data.userId} />;
   }
 
   return (
@@ -109,10 +114,10 @@ export default function Index() {
 }
 
 export function CatchBoundary() {
-  let caught = useCatch<ThrownResponse<number, { slug: string }>>();
+  let caught = useCatch<ThrownResponse<number, SerializeFrom<typeof loader>>>();
 
   if (caught.status === 404) {
-    return <Home />;
+    return <Home loggedIn={!!caught.data.userId} />;
   }
 
   return (
