@@ -22,7 +22,7 @@ export function DiscoLink({ children, to, ...rest }: LinkProps) {
 export function Home({ loggedIn = false }: { loggedIn?: boolean }) {
   return (
     <div className="min-h-full bg-black text-center">
-      <nav className="text-white flex items-center justify-between px-10 fixed top-0 w-full left-0 bg-black py-6">
+      <nav className="hidden text-white sm:flex items-center justify-between px-10 fixed top-0 w-full left-0 bg-black py-6">
         <div>
           <Link to="/">Vancouver</Link>
         </div>
@@ -59,10 +59,11 @@ export function Home({ loggedIn = false }: { loggedIn?: boolean }) {
           </ul>
         )}
       </nav>
-      <h1 className="text-8xl font-extrabold text-white max-w-4xl mx-auto pt-20">
+      <div className="pt-28" />
+      <h1 className="text-5xl lg:text-8xl font-extrabold text-white max-w-4xl mx-auto">
         <GradientText>Streamline</GradientText> booking the easy way
       </h1>
-      <h2 className="text-gray-400 max-w-2xl mx-auto mt-4 text-xl">
+      <h2 className="text-gray-400 max-w-2xl px-4 sm:px-0 mx-auto mt-4 text-xl">
         Custom website. Integrated booking with direct calendar integration.
         E-mail notifications. List and sell your products directly. You name it.
       </h2>
@@ -76,17 +77,17 @@ export function Home({ loggedIn = false }: { loggedIn?: boolean }) {
       </div>
 
       <div id="features" className="h-screen">
-        <h1 className="text-8xl font-extrabold text-white max-w-4xl mx-auto pt-20">
+        <h1 className="text-5xl lg:text-8xl font-extrabold text-white max-w-4xl mx-auto pt-20">
           <GradientText>Features</GradientText>
         </h1>
       </div>
       <div id="pricing" className="h-screen">
-        <h1 className="text-8xl font-extrabold text-white max-w-4xl mx-auto pt-20">
+        <h1 className="text-5xl lg:text-8xl font-extrabold text-white max-w-4xl mx-auto pt-20">
           <GradientText>Pricing</GradientText>
         </h1>
       </div>
       <div id="help" className="h-screen">
-        <h1 className="text-8xl font-extrabold text-white max-w-4xl mx-auto pt-20">
+        <h1 className="text-5xl lg:text-8xl font-extrabold text-white max-w-4xl mx-auto pt-20">
           <GradientText>Help</GradientText>
         </h1>
       </div>
