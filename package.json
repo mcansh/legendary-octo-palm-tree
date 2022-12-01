@@ -2,10 +2,10 @@
   "private": true,
   "sideEffects": false,
   "scripts": {
-    "build:css": "tailwindcss -o app/styles/app.css --postcss --minify",
+    "build:css": "tailwindcss --input ./styles/app.css --output ./app/styles/app.css --postcss --minify",
     "build:remix": "remix build",
     "build": "run-s \"build:*\"",
-    "dev:css": "tailwindcss -o app/styles/app.css --postcss --watch",
+    "dev:css": "tailwindcss --input ./styles/app.css --output ./app/styles/app.css --postcss --watch",
     "dev:remix": "remix dev",
     "dev": "run-p \"dev:*\"",
     "start": "remix-serve build",

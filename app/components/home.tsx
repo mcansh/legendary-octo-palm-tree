@@ -1,4 +1,23 @@
+import * as React from "react";
+import type { LinkProps } from "@remix-run/react";
 import { Form, Link } from "@remix-run/react";
+
+export function GradientText({ children }: { children: React.ReactNode }) {
+  return (
+    <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-200 via-pink-600 to-indigo-500">
+      {children}
+    </span>
+  );
+}
+
+export function DiscoLink({ children, to, ...rest }: LinkProps) {
+  return (
+    <Link to={to} className="disco_button" {...rest}>
+      <span className="content">{children}</span>
+      <span aria-hidden className="disco" />
+    </Link>
+  );
+}
 
 export function Home({ loggedIn = false }: { loggedIn?: boolean }) {
   return (
@@ -41,10 +60,7 @@ export function Home({ loggedIn = false }: { loggedIn?: boolean }) {
         )}
       </nav>
       <h1 className="text-8xl font-extrabold text-white max-w-4xl mx-auto pt-20">
-        <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-200 via-pink-600 to-indigo-500">
-          Streamline
-        </span>{" "}
-        booking the easy way
+        <GradientText>Streamline</GradientText> booking the easy way
       </h1>
       <h2 className="text-gray-400 max-w-2xl mx-auto mt-4 text-xl">
         Custom website. Integrated booking with direct calendar integration.
@@ -56,35 +72,22 @@ export function Home({ loggedIn = false }: { loggedIn?: boolean }) {
           Buy now
         </Link>
 
-        <Link
-          to="/buy"
-          className="rounded-md bg-gradient-to-r from-yellow-200 via-pink-600 to-indigo-500 p-0.5"
-        >
-          <span className="block text-white bg-black px-3.5 py-1.5 rounded">
-            Learn more
-          </span>
-        </Link>
+        <DiscoLink to="/buy">Learn more</DiscoLink>
       </div>
 
       <div id="features" className="h-screen">
         <h1 className="text-8xl font-extrabold text-white max-w-4xl mx-auto pt-20">
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-200 via-pink-600 to-indigo-500">
-            Features
-          </span>
+          <GradientText>Features</GradientText>
         </h1>
       </div>
       <div id="pricing" className="h-screen">
         <h1 className="text-8xl font-extrabold text-white max-w-4xl mx-auto pt-20">
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-200 via-pink-600 to-indigo-500">
-            Pricing
-          </span>
+          <GradientText>Pricing</GradientText>
         </h1>
       </div>
       <div id="help" className="h-screen">
         <h1 className="text-8xl font-extrabold text-white max-w-4xl mx-auto pt-20">
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-200 via-pink-600 to-indigo-500">
-            Help
-          </span>
+          <GradientText>Help</GradientText>
         </h1>
       </div>
     </div>
