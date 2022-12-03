@@ -10,9 +10,9 @@ import {
 } from "@remix-run/react";
 import clsx from "clsx";
 
-import appStylesHref from "~/styles/app.css";
-
 import { useMatches } from "./matches";
+
+import appStylesHref from "~/styles/app.css";
 
 export const meta: V2_MetaFunction = () => {
   return [
