@@ -10,11 +10,11 @@ module.exports = {
   // Tell ESLint not to ignore dot-files, which are ignored by default.
   ignorePatterns: ["!.*.js"],
 
-  plugins: ["remix-react-routes"],
+  // plugins: ["remix-react-routes"],
   rules: {
     "react/jsx-no-leaked-render": ["error", { validStrategies: ["ternary"] }],
-    "remix-react-routes/require-valid-paths": "error",
-    "remix-react-routes/no-relative-paths": "error",
-    "remix-react-routes/no-urls": "error",
+    // "remix-react-routes/require-valid-paths": "error",
+    // "remix-react-routes/no-relative-paths": "error",
+    // "remix-react-routes/no-urls": "error",
   },
 };

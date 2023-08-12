@@ -2,14 +2,11 @@ import type { DataFunctionArgs } from "@remix-run/node";
 import {
   unstable_createMemoryUploadHandler,
   unstable_parseMultipartFormData,
-} from "@remix-run/node";
-import { unstable_composeUploadHandlers } from "@remix-run/node";
-import { json } from "@remix-run/node";
+ unstable_composeUploadHandlers , json } from "@remix-run/node";
 import { useFetcher, useLoaderData } from "@remix-run/react";
 import cuid from "cuid";
 import { z } from "zod";
 import { zfd } from "zod-form-data";
-import { notFound } from "remix-utils";
 
 import { prisma } from "~/db.server";
 import { getTenantBySlug, updateTenant } from "~/models/tenant";
@@ -71,7 +68,10 @@ export async function action({ request, params }: DataFunctionArgs) {
   let tenant = await getTenantBySlug(params.slug);
 
   if (!tenant) {
-    throw notFound("Tenant not found");
+    throw json("Tenant not found", {
+      status: 404,
+      statusText: "Not Found",
+    });
   }
 
   let uploadHandler = unstable_composeUploadHandlers(

@@ -11,6 +11,8 @@ model Tenant {
   id   String @id @default(cuid())
   slug String @unique
   name String
+  shopifyStorefrontUrl String?
+  shopifyStorefrontAccessToken String?
 
   images Image[]
   users  User[]

@@ -75,22 +75,6 @@ export function Home({ loggedIn = false }: { loggedIn?: boolean }) {
 
         <DiscoLink to="/buy">Learn more</DiscoLink>
       </div>
-
-      <div id="features" className="h-screen">
-        <h1 className="text-5xl lg:text-8xl font-extrabold text-white max-w-4xl mx-auto pt-20">
-          <GradientText>Features</GradientText>
-        </h1>
-      </div>
-      <div id="pricing" className="h-screen">
-        <h1 className="text-5xl lg:text-8xl font-extrabold text-white max-w-4xl mx-auto pt-20">
-          <GradientText>Pricing</GradientText>
-        </h1>
-      </div>
-      <div id="help" className="h-screen">
-        <h1 className="text-5xl lg:text-8xl font-extrabold text-white max-w-4xl mx-auto pt-20">
-          <GradientText>Help</GradientText>
-        </h1>
-      </div>
     </div>
   );
 }

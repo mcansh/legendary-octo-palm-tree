@@ -1,5 +1,4 @@
 import type { LinksFunction } from "@remix-run/node";
-import type { V2_MetaFunction } from "@remix-run/react/dist/routeModules";
 import {
   Links,
   LiveReload,
@@ -14,13 +13,6 @@ import appStylesHref from "~/styles/app.css";
 
 import { useMatches } from "./matches";
 
-export const meta: V2_MetaFunction = () => {
-  return [
-    { charSet: "utf-8" },
-    { name: "viewport", content: "width=device-width, initial-scale=1" },
-  ];
-};
-
 export const links: LinksFunction = () => {
   return [{ rel: "stylesheet", href: appStylesHref }];
 };
@@ -32,6 +24,8 @@ export default function App() {
   return (
     <html lang="en" className="h-full">
       <head>
+        <meta charSet="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
         <Meta />
         <Links />
       </head>

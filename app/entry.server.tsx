@@ -19,7 +19,12 @@ let secureHeaders = createSecureHeaders({
     styleSrc: ["'self'", "'unsafe-inline'"],
     scriptSrc: ["'self'", "'unsafe-inline'"],
     connectSrc: process.env.NODE_ENV === "production" ? ["'self'"] : ["*"],
-    imgSrc: ["'self'", "https://res.cloudinary.com", "data:"],
+    imgSrc: [
+      "'self'",
+      "https://res.cloudinary.com",
+      "https://cdn.shopify.com",
+      "data:",
+    ],
   },
   "Strict-Transport-Security": {
     maxAge: 31536000,

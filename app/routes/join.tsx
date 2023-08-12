@@ -1,6 +1,5 @@
 import type { DataFunctionArgs } from "@remix-run/node";
-import { redirect } from "@remix-run/node";
-import { json } from "@remix-run/node";
+import { redirect , json } from "@remix-run/node";
 import { Form, useActionData } from "@remix-run/react";
 import clsx from "clsx";
 import { z } from "zod";

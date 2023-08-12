@@ -1,6 +1,5 @@
 import type { DataFunctionArgs } from "@remix-run/node";
-import { json } from "@remix-run/node";
-import { redirect } from "@remix-run/node";
+import { json , redirect } from "@remix-run/node";
 import { Form } from "@remix-run/react";
 import slugify from "slugify";
 import { zfd } from "zod-form-data";
