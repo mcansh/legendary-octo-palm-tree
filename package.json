@@ -29,7 +29,7 @@
     "react-dom": "^18.2.0",
     "remix-utils": "^4.3.0",
     "slugify": "^1.6.5",
-    "zod": "^3.19.1",
+    "zod": "^3.22.3",
     "zod-form-data": "^1.2.4"
   },
   "devDependencies": {
