@@ -5,16 +5,18 @@ import type {
   V2_MetaFunction,
 } from "@remix-run/react/dist/routeModules";
 import type { ThrownResponse } from "@remix-run/react";
-import { Form } from "@remix-run/react";
-import { useCatch, useLoaderData } from "@remix-run/react";
-import { notFound } from "remix-utils";
+import { Form, useCatch, useLoaderData } from "@remix-run/react";
 
-import { doesUserBelongToTenant } from "~/models/tenant";
+import {
+  doesUserBelongToTenant,
+  getTenantBySlug,
+  getTenantSlug,
+} from "~/models/tenant";
 import { getUserId } from "~/session.server";
-import { getTenantBySlug, getTenantSlug } from "~/models/tenant";
 import { buildImageUrl } from "~/utils.server";
 import { ROOT_DOMAIN } from "~/constants.server";
 import { Home } from "~/components/home";
+import { notFound } from "~/responses.server";
 
 export async function loader({ request }: DataFunctionArgs) {
   let userId = await getUserId(request);

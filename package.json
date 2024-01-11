@@ -27,7 +27,6 @@
     "prisma": "^5.8.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "remix-utils": "^7.5.0",
     "slugify": "^1.6.6",
     "zod": "^3.22.4",
     "zod-form-data": "^2.0.2"

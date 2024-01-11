@@ -2,9 +2,11 @@ import type { Prisma, Tenant, User } from "@prisma/client";
 
 import { prisma } from "~/db.server";
 
-export function getTenantSlug(request: Request) {
+export function getTenantSlug(request: Request): string {
   let url = new URL(request.url);
-  return url.hostname.split(".")[0];
+  let slug = url.hostname.split(".")[0];
+  if (!slug) throw new Error("No tenant slug found");
+  return slug;
 }
 
 export async function getTenantById(id: Tenant["id"]) {
@@ -52,7 +54,7 @@ export async function getTenantsByUserId(userId: User["id"]) {
 
 export async function doesUserBelongToTenant(
   userId?: User["id"],
-  tenantId?: Tenant["id"]
+  tenantId?: Tenant["id"],
 ) {
   if (!userId || !tenantId) return false;
   let count = await prisma.tenant.count({
@@ -63,7 +65,7 @@ export async function doesUserBelongToTenant(
 
 export async function updateTenant(
   tenant: string,
-  data: Prisma.TenantUpdateInput
+  data: Prisma.TenantUpdateInput,
 ) {
   return prisma.tenant.update({
     where: { slug: tenant },

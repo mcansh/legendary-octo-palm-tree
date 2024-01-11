@@ -2,17 +2,17 @@ import type { DataFunctionArgs } from "@remix-run/node";
 import {
   unstable_createMemoryUploadHandler,
   unstable_parseMultipartFormData,
+  unstable_composeUploadHandlers,
+  json,
 } from "@remix-run/node";
-import { unstable_composeUploadHandlers } from "@remix-run/node";
-import { json } from "@remix-run/node";
 import { useFetcher, useLoaderData } from "@remix-run/react";
 import cuid from "cuid";
 import { z } from "zod";
 import { zfd } from "zod-form-data";
-import { notFound } from "remix-utils";
 
 import { prisma } from "~/db.server";
 import { getTenantBySlug, updateTenant } from "~/models/tenant";
+import { notFound } from "~/responses.server";
 import { requireUser } from "~/session.server";
 import {
   deleteImageFromCloudinary,
