@@ -1,11 +1,7 @@
 import type { DataFunctionArgs, SerializeFrom } from "@remix-run/node";
 import { json } from "@remix-run/node";
-import type {
-  V2_HtmlMetaDescriptor,
-  V2_MetaFunction,
-} from "@remix-run/react/dist/routeModules";
-import type { ThrownResponse } from "@remix-run/react";
-import { Form, useCatch, useLoaderData } from "@remix-run/react";
+import type { MetaFunction } from "@remix-run/react";
+import { Form, useLoaderData } from "@remix-run/react";
 
 import {
   doesUserBelongToTenant,
@@ -59,15 +55,10 @@ export async function loader({ request }: DataFunctionArgs) {
   });
 }
 
-export const meta: V2_MetaFunction = (args) => {
-  let data: SerializeFrom<typeof loader> | undefined = args.data;
+export const meta: MetaFunction<typeof loader> = ({ data }) => {
+  if (!data) return [];
   let title = data?.tenant ? data.tenant.name : "Home";
-  return [
-    ...(args.matches.map(
-      (match) => match.meta
-    ) as unknown as V2_HtmlMetaDescriptor[]),
-    { title },
-  ];
+  return [{ title }];
 };
 
 export default function Index() {
