@@ -1,5 +1,4 @@
-import type { User } from "@prisma/client";
-import type { Password } from "@prisma/client";
+import type { User, Password } from "@prisma/client";
 
 import { hash, verify } from "~/auth.server";
 import { prisma } from "~/db.server";
@@ -41,7 +40,7 @@ export async function deleteUserByEmail(email: User["email"]) {
 
 export async function verifyLogin(
   email: User["email"],
-  password: Password["hash"]
+  password: Password["hash"],
 ) {
   let userWithPassword = await prisma.user.findUnique({
     where: { email },

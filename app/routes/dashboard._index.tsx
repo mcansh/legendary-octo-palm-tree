@@ -30,21 +30,21 @@ export default function Dashboard() {
     <div className="mx-8 my-4">
       <h1 className="text-2xl">Tenants I manage</h1>
 
-      <ul className="mt-4 grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <ul className="mt-4 grid grid-cols-2 gap-4 lg:grid-cols-4">
         {data.tenants.map((tenant) => {
           return (
             <li key={tenant.id}>
               <div>{tenant.name}</div>
-              <div className="space-x-2 grid grid-cols-2 text-center">
+              <div className="grid grid-cols-2 space-x-2 text-center">
                 <a
                   href={tenant.url}
-                  className="bg-indigo-600 text-white rounded py-2"
+                  className="rounded bg-indigo-600 py-2 text-white"
                 >
                   view site
                 </a>
                 <Link
                   to={tenant.slug + "/edit"}
-                  className="text-indigo-600 border py-2"
+                  className="border py-2 text-indigo-600"
                 >
                   manage
                 </Link>

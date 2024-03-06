@@ -34,7 +34,7 @@ export async function getUser(request: Request) {
 }
 
 export async function getUserId(
-  request: Request
+  request: Request,
 ): Promise<User["id"] | undefined> {
   let session = await getSession(request);
   let userId = session.get(USER_SESSION_KEY);
@@ -43,7 +43,7 @@ export async function getUserId(
 
 export async function requireUserId(
   request: Request,
-  redirectTo: string = new URL(request.url).pathname
+  redirectTo: string = new URL(request.url).pathname,
 ) {
   let userId = await getUserId(request);
   if (!userId) {

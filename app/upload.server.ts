@@ -7,18 +7,18 @@ import type {
 import cloudinary from "cloudinary";
 
 export async function deleteImageFromCloudinary(
-  publicId: string
+  publicId: string,
 ): Promise<DeleteApiResponse> {
   return new Promise((resolve, reject) => {
     cloudinary.v2.uploader.destroy(publicId, (error, result) =>
-      error ? reject(error) : resolve(result)
+      error ? reject(error) : resolve(result),
     );
   });
 }
 
 export async function uploadImageToCloudinary(
   data: AsyncIterable<Uint8Array>,
-  options: Omit<UploadApiOptions, "folder"> = {}
+  options: Omit<UploadApiOptions, "folder"> = {},
 ) {
   let uploadPromise = new Promise<UploadApiResponse | undefined>(
     async (resolve, reject) => {
@@ -42,10 +42,10 @@ export async function uploadImageToCloudinary(
 
           // if we have no result and no error, we'll reject the promise
           reject(undefined);
-        }
+        },
       );
       await writeAsyncIterableToWritable(data, uploadStream);
-    }
+    },
   );
 
   return uploadPromise;

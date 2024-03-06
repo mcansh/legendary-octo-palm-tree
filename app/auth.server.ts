@@ -17,10 +17,11 @@ export async function hash(password: string): Promise<string> {
 
 export async function verify(
   password: string,
-  hashed: string
+  hashed: string,
 ): Promise<boolean> {
   return new Promise((resolve, reject) => {
     let [salt, key] = hashed.split(":");
+    if (!salt || !key) return reject("Invalid hashed password");
     crypto.scrypt(password, salt, LENGTH, (err, derivedKey) => {
       if (err) reject(err);
       resolve(key === derivedKey.toString("hex"));
