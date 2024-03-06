@@ -54,7 +54,6 @@ export function Home({ loggedIn = false }: { loggedIn?: boolean }) {
               <Link to="/login">Sign in</Link>
             </li>
             <li>
-              {/* eslint-disable-next-line remix-react-routes/require-valid-paths */}
               <Link to="/signup">Get started</Link>
             </li>
           </ul>
@@ -70,7 +69,6 @@ export function Home({ loggedIn = false }: { loggedIn?: boolean }) {
       </h2>
 
       <div className="mt-8 flex items-center justify-center space-x-6">
-        {/* eslint-disable-next-line remix-react-routes/require-valid-paths */}
         <Link to="/buy" className="rounded-md bg-white px-4 py-2 text-black">
           Buy now
         </Link>
