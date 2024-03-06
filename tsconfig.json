@@ -5,7 +5,6 @@
     /* base options */
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
-    "incremental": true,
     "skipLibCheck": true,
     "target": "ES2022",
     "verbatimModuleSyntax": true,
@@ -16,6 +15,7 @@
     "jsx": "react-jsx",
     "baseUrl": ".",
     "paths": { "~/*": ["./app/*"] },
+    "types": ["@remix-run/node", "vite/client"],
 
     /* strictness */
     "strict": true,
