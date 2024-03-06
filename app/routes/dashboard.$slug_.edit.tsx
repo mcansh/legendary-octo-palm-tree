@@ -1,18 +1,18 @@
-import type { DataFunctionArgs } from "@remix-run/node";
+import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 import {
   unstable_createMemoryUploadHandler,
   unstable_parseMultipartFormData,
+  unstable_composeUploadHandlers,
+  json,
 } from "@remix-run/node";
-import { unstable_composeUploadHandlers } from "@remix-run/node";
-import { json } from "@remix-run/node";
 import { useFetcher, useLoaderData } from "@remix-run/react";
 import cuid from "cuid";
 import { z } from "zod";
 import { zfd } from "zod-form-data";
-import { notFound } from "remix-utils";
 
 import { prisma } from "~/db.server";
 import { getTenantBySlug, updateTenant } from "~/models/tenant";
+import { notFound } from "~/responses.server";
 import { requireUser } from "~/session.server";
 import {
   deleteImageFromCloudinary,
@@ -20,7 +20,7 @@ import {
 } from "~/upload.server";
 import { rootDomainOnly, buildImageUrl } from "~/utils.server";
 
-export async function loader({ request, params }: DataFunctionArgs) {
+export async function loader({ request, params }: LoaderFunctionArgs) {
   await requireUser(request);
 
   if (!params.slug) throw new Error("missing tenant slug");
@@ -63,10 +63,12 @@ const schema = zfd.formData(
           message: "Image alt text is required when an image is provided",
         };
       }
-    })
+    }),
 );
 
-export async function action({ request, params }: DataFunctionArgs) {
+type SchemaErrors = z.inferFlattenedErrors<typeof schema>["fieldErrors"];
+
+export async function action({ request, params }: ActionFunctionArgs) {
   if (!params.slug) throw new Error("missing tenant slug");
   let tenant = await getTenantBySlug(params.slug);
 
@@ -87,7 +89,7 @@ export async function action({ request, params }: DataFunctionArgs) {
       return uploadedImage.public_id;
     },
     // fallback to memory for everything else
-    unstable_createMemoryUploadHandler()
+    unstable_createMemoryUploadHandler(),
   );
 
   let formData = await unstable_parseMultipartFormData(request, uploadHandler);
@@ -109,12 +111,10 @@ export async function action({ request, params }: DataFunctionArgs) {
   let result = schema.safeParse(formData);
 
   if (!result.success) {
-    console.log(result.error.formErrors.fieldErrors);
+    let errors = result.error.formErrors.fieldErrors as SchemaErrors;
+    console.log(`errors: ${JSON.stringify(errors)}`);
 
-    return json(
-      { errors: result.error.formErrors.fieldErrors },
-      { status: 400 }
-    );
+    return json({ errors }, { status: 400 });
   }
 
   await updateTenant(params.slug, {
@@ -122,10 +122,7 @@ export async function action({ request, params }: DataFunctionArgs) {
     images: {
       create:
         result.data.image && result.data.imageAltText
-          ? {
-              alt: result.data.imageAltText,
-              public_id: result.data.image,
-            }
+          ? { alt: result.data.imageAltText, public_id: result.data.image }
           : undefined,
     },
   });
@@ -200,7 +197,7 @@ export default function Dashboard() {
         </label>
 
         <button
-          className="w-max bg-indigo-500 text-white px-4 py-2 rounded-md"
+          className="w-max rounded-md bg-indigo-500 px-4 py-2 text-white"
           type="submit"
         >
           Update
@@ -226,7 +223,7 @@ export default function Dashboard() {
 
 function ErrorMessages({ errors, id }: { errors: Array<string>; id: string }) {
   return (
-    <ul className="text-red-500 list-disc pl-4" id={id}>
+    <ul className="list-disc pl-4 text-red-500" id={id}>
       {errors.map((error) => (
         <li key={error}>{error}</li>
       ))}

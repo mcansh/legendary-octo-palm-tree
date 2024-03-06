@@ -1,22 +1,25 @@
-import type { DataFunctionArgs, SerializeFrom } from "@remix-run/node";
+import type { LoaderFunctionArgs } from "@remix-run/node";
 import { json } from "@remix-run/node";
-import type {
-  V2_HtmlMetaDescriptor,
-  V2_MetaFunction,
-} from "@remix-run/react/dist/routeModules";
-import type { ThrownResponse } from "@remix-run/react";
-import { Form } from "@remix-run/react";
-import { useCatch, useLoaderData } from "@remix-run/react";
-import { notFound } from "remix-utils";
+import type { MetaFunction } from "@remix-run/react";
+import {
+  Form,
+  isRouteErrorResponse,
+  useLoaderData,
+  useRouteError,
+} from "@remix-run/react";
 
-import { doesUserBelongToTenant } from "~/models/tenant";
+import {
+  doesUserBelongToTenant,
+  getTenantBySlug,
+  getTenantSlug,
+} from "~/models/tenant";
 import { getUserId } from "~/session.server";
-import { getTenantBySlug, getTenantSlug } from "~/models/tenant";
 import { buildImageUrl } from "~/utils.server";
 import { ROOT_DOMAIN } from "~/constants.server";
 import { Home } from "~/components/home";
+import { notFound } from "~/responses.server";
 
-export async function loader({ request }: DataFunctionArgs) {
+export async function loader({ request }: LoaderFunctionArgs) {
   let userId = await getUserId(request);
 
   let url = new URL(request.url);
@@ -57,15 +60,10 @@ export async function loader({ request }: DataFunctionArgs) {
   });
 }
 
-export const meta: V2_MetaFunction = (args) => {
-  let data: SerializeFrom<typeof loader> | undefined = args.data;
+export const meta: MetaFunction<typeof loader> = ({ data }) => {
+  if (!data) return [];
   let title = data?.tenant ? data.tenant.name : "Home";
-  return [
-    ...(args.matches.map(
-      (match) => match.meta
-    ) as unknown as V2_HtmlMetaDescriptor[]),
-    { title },
-  ];
+  return [{ title }];
 };
 
 export default function Index() {
@@ -77,7 +75,7 @@ export default function Index() {
 
   return (
     <>
-      <nav className="flex justify-between items-center mx-8 my-4">
+      <nav className="mx-8 my-4 flex items-center justify-between">
         <h1 className="text-xl">
           <a href="/">{data.tenant.name}</a>
         </h1>
@@ -98,13 +96,13 @@ export default function Index() {
         </ul>
       </nav>
       <main className="mx-8">
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 justify-center items-center">
+        <div className="grid grid-cols-2 items-center justify-center gap-4 lg:grid-cols-4">
           {data.tenant.images.map((image) => (
             <img
               key={image.id}
               src={image.url}
               alt={image.alt}
-              className="aspect-square w-full h-full rounded bg-gray-400"
+              className="aspect-square h-full w-full rounded bg-gray-400"
             />
           ))}
         </div>
@@ -113,19 +111,35 @@ export default function Index() {
   );
 }
 
-export function CatchBoundary() {
-  let caught = useCatch<ThrownResponse<number, SerializeFrom<typeof loader>>>();
+export function ErrorBoundary() {
+  let error = useRouteError();
+  if (typeof document === "undefined") {
+    console.error(error);
+  }
 
-  if (caught.status === 404) {
-    return <Home loggedIn={!!caught.data.userId} />;
+  if (
+    isRouteErrorResponse(error) &&
+    error.status === 404 &&
+    "userId" in error.data &&
+    typeof error.data.userId === "string"
+  ) {
+    return <Home loggedIn={!!error.data.userId} />;
+  }
+
+  let status = 500;
+  let statusText = "Internal Server Error";
+
+  if (isRouteErrorResponse(error)) {
+    status = error.status;
+    statusText = error.statusText;
   }
 
   return (
-    <div className="grid place-items-center h-full text-center">
+    <div className="grid h-full place-items-center text-center">
       <div>
         <h1>Something went wrong</h1>
         <h2>
-          {caught.status} {caught.statusText}
+          {status} {statusText}
         </h2>
       </div>
     </div>

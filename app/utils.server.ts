@@ -31,7 +31,7 @@ export function rootDomainOnly(request: Request, pathname?: string) {
 export function createTenantUrl(
   request: Request,
   tenant: string,
-  pathname = "/"
+  pathname = "/",
 ) {
   let url = new URL(request.url);
   let domain = `${tenant}.${ROOT_DOMAIN}`;
